@@ -20,8 +20,8 @@
         android:label="@string/title_discover"
         tools:layout="@layout/fragment_discover" />
     <fragment
-        android:id="@+id/navigation_profile"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        android:id="@+id/navigation_comunity"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.comunity.ComunityFragment"
+        android:label="@string/title_comunity"
+        tools:layout="@layout/fragment_comunity" />
 </navigation>

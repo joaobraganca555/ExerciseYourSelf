@@ -11,9 +11,9 @@
     <item
         android:id="@+id/navigation_exercise"
         android:icon="@drawable/ic_exercise"
-        android:title="Exercicio"/>
+        android:title="Exercício"/>
     <item
-        android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_profile"
-        android:title="Perfil"/>
+        android:id="@+id/navigation_comunity"
+        android:icon="@drawable/ic_navigation_comunity"
+        android:title="Comunidade"/>
 </menu>

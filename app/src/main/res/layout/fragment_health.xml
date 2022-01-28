@@ -1,35 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    layout_height="wrap_content"
+    layout_width="wrap_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/mainContainer">
+    android:id="@+id/mainContainer"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="20dp">
 
-    <TextView
-        android:id="@+id/txtFootSteps"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
-    <com.mikhaellopez.circularprogressbar.CircularProgressBar
-        android:id="@+id/circularProgressBar"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:cpb_background_progressbar_color="#b6bbd8"
-        app:cpb_background_progressbar_width="5dp"
-        app:cpb_progress_direction="to_right"
-        app:cpb_progressbar_color="#3f51b5"
-        app:cpb_progressbar_width="12dp"
-        app:cpb_round_border="true"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
-    <Button
-        android:id="@+id/btnLocationPage"
-        android:layout_width="wrap_content"
+        android:id="@+id/mainContaine2r">
+
+        <TextView
+            android:id="@+id/txtFootSteps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="3213"
+            android:layout_centerVertical="true" />
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/circularProgressBar"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            app:cpb_background_progressbar_color="#b6bbd8"
+            app:cpb_background_progressbar_width="5dp"
+            app:cpb_progress_direction="to_right"
+            app:cpb_progressbar_color="#3f51b5"
+            app:cpb_progressbar_width="12dp"
+            app:cpb_round_border="true">
+
+        </com.mikhaellopez.circularprogressbar.CircularProgressBar>
+
+    </RelativeLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Location"
-        android:layout_below="@id/circularProgressBar"
-        android:layout_centerHorizontal="true"/>
-</RelativeLayout>
+        android:layout_margin="8dp"
+        tools:ignore="ExtraText"
+        android:checkable="true"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Titulo"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Mais texto"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Ainda mais texto"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"
+                />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
