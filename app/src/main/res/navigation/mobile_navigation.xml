@@ -3,23 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
-
+    app:startDestination="@+id/navigation_health">
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
-
+        android:id="@+id/navigation_health"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.health.HealthFragment"
+        android:label="@string/title_health"
+        tools:layout="@layout/fragment_health" />
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
-
+        android:id="@+id/navigation_exercise"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment"
+        android:label="@string/title_exercise"
+        tools:layout="@layout/fragment_exercise" />
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_discover"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.discover.DiscoverFragment"
+        android:label="@string/title_discover"
+        tools:layout="@layout/fragment_discover" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>
