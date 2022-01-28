@@ -8,6 +8,22 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 
 
+enum class Sport{
+    RUNNING_OUTDOOR,
+    RUNNING_INDOOR,
+    WALKING,
+    GYM,
+    HOME_TRAINING,
+    OTHER
+}
+
+enum class Status{
+    PLANNED,
+    SUCCESSFULLY,
+    FAILED,
+    EXPIRED
+}
+
 fun Context.hasPermission(permission: String): Boolean {
 
     // Background permissions didn't exit prior to Q, so it's approved by default.
