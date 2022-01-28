@@ -1,0 +1,76 @@
+package pt.ipp.estg.cmu_exerciseyourself.authentication
+
+import android.content.Context
+import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import pt.ipp.estg.cmu_exerciseyourself.R
+import pt.ipp.estg.cmu_exerciseyourself.interfaces.IAuthentication
+import java.lang.ClassCastException
+
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+/**
+ * A simple [Fragment] subclass.
+ * Use the [LoginFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
+class LoginFragment : Fragment() {
+    // TODO: Rename and change types of parameters
+    lateinit var loginButton : Button
+    lateinit var registerButton: Button
+    lateinit var mailText : TextInputEditText
+    lateinit var passwordText : TextInputEditText
+    lateinit var parentActivity : IAuthentication
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            parentActivity = context as IAuthentication
+        } catch (e: ClassCastException) {
+            Log.d("LoginFragment", "Atividade mãe deve implementar IAuthentication")
+            Log.d("LoginFragment", e.toString())
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_login, container, false)
+
+        loginButton = view.findViewById(R.id.loginButton)
+        registerButton = view.findViewById(R.id.registerButton)
+        mailText = view.findViewById(R.id.emailText)
+        passwordText = view.findViewById(R.id.passwordText)
+
+        loginButton.setOnClickListener {
+            parentActivity.login(mailText.text.toString(), passwordText.text.toString(), view.findViewById(R.id.passwordField))
+        }
+
+        registerButton.setOnClickListener {
+            parentActivity.startRegisterFragment()
+        }
+
+        return view
+    }
+
+
+
+}

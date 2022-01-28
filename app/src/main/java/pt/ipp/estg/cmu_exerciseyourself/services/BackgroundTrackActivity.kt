@@ -11,6 +11,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment
@@ -91,6 +92,10 @@ class BackgroundTrackActivity: Service() {
                     }
                     mLocation?.let {
                         Log.d("asd", "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance")
+                        Toast.makeText(
+                            baseContext, totalDistance.toString(),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             })
