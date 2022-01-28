@@ -11,14 +11,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.mikhaellopez.circularprogressbar.CircularProgressBar
+import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentHealthBinding
 
 class HealthFragment : Fragment(),SensorEventListener {
-    private var _binding: FragmentHealthBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentHealthBinding
+    private lateinit var txtFootSteps: TextView
+    private lateinit var circularProgressBar: CircularProgressBar
     private var sensorManager: SensorManager? = null
-    private var running = false
     private var totalSteps = 0f
     private var previousSteps = 0f
     private lateinit var myContext: Context
@@ -53,34 +57,35 @@ class HealthFragment : Fragment(),SensorEventListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentHealthBinding.inflate(inflater, container, false)
+        binding = FragmentHealthBinding.inflate(inflater, container, false)
         loadData()
         resetSteps()
         sensorManager = myContext.getSystemService(SENSOR_SERVICE) as SensorManager
-        binding.circularProgressBar.apply {
-            progressMax = 10000f
-        }
 
         val root: View = binding.root
 
+        circularProgressBar = root.findViewById(R.id.circularProgressBar)
+
+        circularProgressBar.apply {
+            progressMax = 10000f
+        }
+
+        txtFootSteps = root.findViewById(R.id.txtFootSteps)
         return root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
         sensorManager?.unregisterListener(this)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if(running){
-            totalSteps = event!!.values[0]
-            val currentSteps = totalSteps.toInt() - previousSteps.toInt()
+        totalSteps = event!!.values[0]
+        val currentSteps = totalSteps.toInt() - previousSteps.toInt()
 
-            binding.txtFootSteps.text = ("$currentSteps")
-            binding.circularProgressBar.apply {
-                setProgressWithAnimation(currentSteps.toFloat())
-            }
+        txtFootSteps.text = ("$currentSteps")
+        circularProgressBar.apply {
+            setProgressWithAnimation(currentSteps.toFloat())
         }
     }
 

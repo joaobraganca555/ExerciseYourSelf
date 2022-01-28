@@ -135,15 +135,6 @@ class MainActivity : AppCompatActivity(),ServiceController {
         registerReceiver(broadcastReceiver,intentFil);
     }
 
-    override fun onStop() {
-        super.onStop()
-        //unregisterReceiver(broadcastReceiver)
-    }
-    override fun onPause() {
-        super.onPause()
-        //unregisterReceiver(broadcastReceiver)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
