@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthEmailException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -74,7 +76,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         private const val TAG = "EmailPassword"
     }
 
-    override fun login(email: String, password: String, passwordLayout: TextInputLayout) {
+    override fun login(email: String, password: String, passwordLayout: TextInputLayout, emailLayout: TextInputLayout) {
         if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
             // [START sign_in_with_email]
             auth.signInWithEmailAndPassword(email, password)
@@ -86,7 +88,11 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
                         updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
-                        passwordLayout.error = task.exception!!.message.toString()
+                        if (task.exception is FirebaseAuthEmailException || task.exception is FirebaseAuthInvalidCredentialsException) {
+                            emailLayout.error = task.exception!!.message
+                        } else {
+                            passwordLayout.error = task.exception!!.message
+                        }
                         Log.w(TAG, "signInWithEmail:failure", task.exception)
                         Toast.makeText(
                             baseContext, "Authentication failed.",

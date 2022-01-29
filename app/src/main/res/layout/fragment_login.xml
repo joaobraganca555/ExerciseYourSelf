@@ -10,15 +10,6 @@
     tools:context=".ui.authentication.LoginFragment"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Bem vindo"
-        android:textSize="50dp"
-        android:gravity="center"/>
-
-    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -32,7 +23,9 @@
             app:startIconDrawable="@drawable/ic_baseline_email_24"
             app:errorEnabled="true"
             android:hint="E-mail"
-            android:layout_margin="10dp"
+            android:id="@+id/emailField"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -49,7 +42,8 @@
             app:endIconMode="password_toggle"
             app:startIconDrawable="@drawable/ic_baseline_key_24"
             app:errorEnabled="true"
-            android:layout_margin="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:hint="Palavra-Passe"
             android:id="@+id/passwordField"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -67,7 +61,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="right"
             android:orientation="horizontal">
 
             <Button

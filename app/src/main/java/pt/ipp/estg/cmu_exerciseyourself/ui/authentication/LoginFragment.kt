@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IAuthentication
 import java.lang.ClassCastException
@@ -30,6 +31,8 @@ class LoginFragment : Fragment() {
     lateinit var mailText : TextInputEditText
     lateinit var passwordText : TextInputEditText
     lateinit var parentActivity : IAuthentication
+    lateinit var passwordLayout : TextInputLayout
+    lateinit var emailLayout : TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,12 +61,18 @@ class LoginFragment : Fragment() {
         registerButton = view.findViewById(R.id.registerButton)
         mailText = view.findViewById(R.id.emailText)
         passwordText = view.findViewById(R.id.passwordText)
+        passwordLayout = view.findViewById(R.id.passwordField)
+        emailLayout = view.findViewById(R.id.emailField)
 
         loginButton.setOnClickListener {
-            parentActivity.login(mailText.text.toString(), passwordText.text.toString(), view.findViewById(R.id.passwordField))
+            passwordLayout.error = null
+            emailLayout.error = null
+            parentActivity.login(mailText.text.toString(), passwordText.text.toString(), passwordLayout, emailLayout)
         }
 
         registerButton.setOnClickListener {
+            passwordLayout.error = null
+            emailLayout.error = null
             parentActivity.startRegisterFragment()
         }
 
