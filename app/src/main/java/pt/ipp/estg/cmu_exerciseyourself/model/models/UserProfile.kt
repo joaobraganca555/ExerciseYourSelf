@@ -1,4 +1,4 @@
-package pt.ipp.estg.cmu_exerciseyourself.models
+package pt.ipp.estg.cmu_exerciseyourself.model.models
 
 data class UserProfile (
     var id:Int,

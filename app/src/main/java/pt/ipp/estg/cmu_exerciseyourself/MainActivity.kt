@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
         }
     }
 
-
     private val fineLocationRationalSnackbar by lazy {
         Snackbar.make(binding.container,
             "The fine location permission is needed for core functionality.",

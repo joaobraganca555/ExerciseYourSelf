@@ -1,11 +1,11 @@
-package pt.ipp.estg.cmu_exerciseyourself.models.room
+package pt.ipp.estg.cmu_exerciseyourself.model.room
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import pt.ipp.estg.cmu_exerciseyourself.models.room.dao.WorkoutsDao
-import pt.ipp.estg.cmu_exerciseyourself.models.room.entities.Workouts
+import pt.ipp.estg.cmu_exerciseyourself.model.room.dao.WorkoutsDao
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 
 @Database(entities = arrayOf(Workouts::class),version = 1)
 abstract class FitnessDb: RoomDatabase() {
