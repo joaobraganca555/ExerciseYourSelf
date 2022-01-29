@@ -1,4 +1,4 @@
-package pt.ipp.estg.cmu_exerciseyourself.authentication
+package pt.ipp.estg.cmu_exerciseyourself.ui.authentication
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

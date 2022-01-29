@@ -1,6 +1,6 @@
 package pt.ipp.estg.cmu_exerciseyourself.interfaces
 
-interface ServiceController {
+interface IServiceController {
     fun startManualExercise()
     fun stopManualExercise()
 }

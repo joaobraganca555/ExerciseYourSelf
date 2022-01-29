@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
-import pt.ipp.estg.cmu_exerciseyourself.interfaces.ServiceController
+import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 
 class ExerciseFragment : Fragment() {
     private var _binding: FragmentExerciseBinding? = null
     private val binding get() = _binding!!
-    private lateinit var myContext: ServiceController
+    private lateinit var myContext: IServiceController
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        myContext = context as ServiceController
+        myContext = context as IServiceController
     }
 
     override fun onCreateView(

@@ -17,7 +17,7 @@
             android:exported="false"
             android:label="@string/title_activity_main" />
         <activity
-            android:name=".authentication.AuthenticationActivity"
+            android:name="pt.ipp.estg.cmu_exerciseyourself.ui.authentication.AuthenticationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

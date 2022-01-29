@@ -17,12 +17,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import pt.ipp.estg.cmu_exerciseyourself.databinding.ActivityMainBinding
-import pt.ipp.estg.cmu_exerciseyourself.interfaces.ServiceController
+import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.services.BackgroundTrackActivity
 import pt.ipp.estg.cmu_exerciseyourself.utils.hasPermission
 import pt.ipp.estg.cmu_exerciseyourself.utils.requestPermissionWithRationale
 
-class MainActivity : AppCompatActivity(),ServiceController {
+class MainActivity : AppCompatActivity(),IServiceController {
     lateinit var binding: ActivityMainBinding
     var locationService: BackgroundTrackActivity? = null
     val broadcastReceiver = object: BroadcastReceiver(){
