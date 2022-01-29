@@ -31,4 +31,7 @@ interface WorkoutsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertWorkout(workout:Workouts):Long
+
+    @Query("DELETE FROM Workouts")
+    fun deleteAll()
 }

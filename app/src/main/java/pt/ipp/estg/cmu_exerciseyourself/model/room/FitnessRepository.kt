@@ -40,4 +40,8 @@ class FitnessRepository(val application: Application) {
     fun insertWorkout(workout: Workouts):Long{
         return workoutsDao.insertWorkout(workout)
     }
+
+    fun deleteAllWorkouts(){
+        workoutsDao.deleteAll()
+    }
 }
