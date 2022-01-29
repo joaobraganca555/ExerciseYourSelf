@@ -4,13 +4,16 @@ import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -18,13 +21,21 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import pt.ipp.estg.cmu_exerciseyourself.databinding.ActivityMainBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
+import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.services.BackgroundTrackActivity
+import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
+import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import pt.ipp.estg.cmu_exerciseyourself.utils.hasPermission
 import pt.ipp.estg.cmu_exerciseyourself.utils.requestPermissionWithRationale
+import java.time.LocalDateTime
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(),IServiceController {
+    lateinit var fitnessRepository:FitnessRepository
     lateinit var binding: ActivityMainBinding
     var locationService: BackgroundTrackActivity? = null
+
     val broadcastReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             Toast.makeText(baseContext,"Service Finished", Toast.LENGTH_SHORT).show()
@@ -52,6 +63,20 @@ class MainActivity : AppCompatActivity(),IServiceController {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        fitnessRepository = FitnessRepository(application)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            loadInfo()
+        }
+
+        fitnessRepository.getAllWorkouts().observe(this, Observer {
+            Log.d("asd", "all=" + it.toString())
+        })
+
+        fitnessRepository.getAllPlannedWorkouts().observe(this, Observer {
+            Log.d("asd", "planned=" + it.toString())
+        })
+
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
@@ -64,7 +89,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
 
         val serviceConnection by lazy{
             object: ServiceConnection {
@@ -93,9 +117,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
                     // If user interaction was interrupted, the permission request
                     Log.d("asd", "User interaction was cancelled.")
                 grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-                Snackbar.make(
-                        binding.container, "You approved FINE location, click start!",
-                        Snackbar.LENGTH_LONG).show()
+                    startService(Intent(this,BackgroundTrackActivity::class.java))
                 else -> {
                     Snackbar.make(
                         binding.container,
@@ -156,4 +178,22 @@ class MainActivity : AppCompatActivity(),IServiceController {
         sendBroadcast(intent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadInfo(){
+        Executors.newFixedThreadPool(1).execute {
+            fitnessRepository.deleteAllWorkouts()
+
+            fitnessRepository.insertWorkout(Workouts(sport = Sport.GYM.toString(), duration = 15,
+                status = Status.PLANNED.toString(), distance = 15, local = "Vizela", footsteps = 5000,
+                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), id = null))
+
+            fitnessRepository.insertWorkout(Workouts(sport = Sport.GYM.toString(), duration = 25,
+                status = Status.SUCCESSFULLY.toString(), distance = 25, local = "Moreira", footsteps = 5000,
+                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), id = null))
+
+            fitnessRepository.insertWorkout(Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = 15,
+                status = Status.PLANNED.toString(), distance = 15, local = "Vizela", footsteps = 5000,
+                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), id = null))
+        }
+    }
 }
