@@ -30,5 +30,5 @@ interface WorkoutsDao {
     fun updateStateWorkout(id:String, stateOfWorkout:Status)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWorkout(workout:Workouts)
+    fun insertWorkout(workout:Workouts):Long
 }

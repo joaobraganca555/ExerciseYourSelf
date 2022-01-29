@@ -9,8 +9,8 @@ import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 data class Workouts(
     @PrimaryKey(autoGenerate = true)
     val id:Int,
-    val sport: Sport,
-    val status: Status,
+    val sport: String,
+    val status: String,
     val duration:Int,
     val distance:Int,
     val footsteps:Int,

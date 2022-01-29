@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import pt.ipp.estg.cmu_exerciseyourself.model.room.dao.WorkoutsDao
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 
-@Database(entities = arrayOf(Workouts::class),version = 1)
+@Database(entities = arrayOf(Workouts::class),version = 2)
 abstract class FitnessDb: RoomDatabase() {
     companion object{
         const val DATABASE_NAME = "FitnessDb"

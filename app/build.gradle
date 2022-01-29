@@ -42,9 +42,10 @@ apply plugin: 'com.google.gms.google-services'
 
 dependencies {
     //For room db
-    def roomVersion = "2.3.0"
+    def roomVersion = "2.4.0-alpha03"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
+
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$roomVersion")
 

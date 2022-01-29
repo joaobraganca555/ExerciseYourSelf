@@ -34,10 +34,10 @@ class FitnessRepository(val application: Application) {
     }
 
     fun updateStateWorkout(id:String, stateOfWorkout: Status){
-        return workoutsDao.updateStateWorkout(id,stateOfWorkout)
+        workoutsDao.updateStateWorkout(id,stateOfWorkout)
     }
 
-    fun insertWorkout(workout: Workouts){
+    fun insertWorkout(workout: Workouts):Long{
         return workoutsDao.insertWorkout(workout)
     }
 }
