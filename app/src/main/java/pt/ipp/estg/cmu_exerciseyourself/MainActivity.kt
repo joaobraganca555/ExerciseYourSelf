@@ -242,7 +242,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
         when (item.itemId) {
             R.id.navigation_measurements -> {
                 navController.navigate(R.id.navigation_measurements)
-                return true
             }
             R.id.navigation_settings -> {
                 Log.d("asd", "onOptionsItemSelected: sett")

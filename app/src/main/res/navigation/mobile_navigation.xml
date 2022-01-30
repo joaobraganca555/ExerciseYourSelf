@@ -31,7 +31,7 @@
         tools:layout="@layout/fragment_exercise"/>
     <fragment
         android:id="@+id/navigation_measurements"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.measurements.Measurements"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.measurements.MeasurementsFragment"
         android:label="@string/title_measurements"
         tools:layout="@layout/fragment_measurements"/>
     <fragment

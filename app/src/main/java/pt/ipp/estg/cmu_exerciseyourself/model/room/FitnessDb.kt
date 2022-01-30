@@ -10,7 +10,7 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Measurements
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 
-@Database(entities = arrayOf(Workouts::class,Coordinates::class,Measurements::class),version = 7)
+@Database(entities = arrayOf(Workouts::class,Coordinates::class,Measurements::class),version = 8)
 abstract class FitnessDb: RoomDatabase() {
     companion object{
         const val DATABASE_NAME = "FitnessDb"

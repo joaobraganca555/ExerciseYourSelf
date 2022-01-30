@@ -19,15 +19,7 @@ import java.lang.ClassCastException
 import java.text.SimpleDateFormat
 import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     lateinit var registerButton : Button
     lateinit var birthDateText : TextInputEditText
     lateinit var birthDateImage : ImageView

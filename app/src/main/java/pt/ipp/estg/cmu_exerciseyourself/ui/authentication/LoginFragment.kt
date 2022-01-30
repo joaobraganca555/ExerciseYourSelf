@@ -14,16 +14,6 @@ import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IAuthentication
 import java.lang.ClassCastException
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginFragment : Fragment() {
     // TODO: Rename and change types of parameters
     lateinit var loginButton : Button
@@ -45,7 +35,7 @@ class LoginFragment : Fragment() {
         try {
             parentActivity = context as IAuthentication
         } catch (e: ClassCastException) {
-            Log.d("LoginFragment", "Atividade mãe deve implementar IAuthentication")
+            Log.d("LoginFragment", "parentActivity deve implementar IAuthentication")
             Log.d("LoginFragment", e.toString())
         }
     }
