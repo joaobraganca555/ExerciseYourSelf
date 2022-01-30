@@ -37,8 +37,7 @@
                 android:id="@+id/txtFootSteps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="28sp"
+                android:textSize="25sp"
                 android:layout_gravity="center"
                 android:textColor="#3D5270"
                 android:text="3213"
@@ -53,8 +52,8 @@
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/circularProgressBar"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             app:cpb_background_progressbar_color="#b6bbd8"
             app:cpb_background_progressbar_width="5dp"
@@ -62,7 +61,6 @@
             app:cpb_progressbar_color="#3043A8"
             app:cpb_progressbar_width="12dp"
             app:cpb_round_border="true"></com.mikhaellopez.circularprogressbar.CircularProgressBar>
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -86,8 +84,7 @@
                 android:id="@+id/txtNumCal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="28sp"
+                android:textSize="25sp"
                 android:layout_gravity="center"
                 android:textColor="#3D5270"
                 android:text="3213"
@@ -100,11 +97,10 @@
                 android:layout_gravity="center"/>
         </LinearLayout>
 
-
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/circularProgressBarCal"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             app:cpb_background_progressbar_color="#b6bbd8"
             app:cpb_background_progressbar_width="5dp"
@@ -118,8 +114,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         tools:ignore="ExtraText"
@@ -139,14 +135,13 @@
                     android:layout_height="wrap_content"
                     android:text="77"
                     android:textColor="#3D5270"
-                    android:textStyle="bold"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                     android:layout_gravity="center"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="Peso (Kg)"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
@@ -165,7 +160,6 @@
                     android:layout_height="wrap_content"
                     android:text="1.80"
                     android:textColor="#3D5270"
-                    android:textStyle="bold"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                     android:layout_gravity="center"
                     />
@@ -173,7 +167,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="Altura (m)"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
@@ -193,7 +187,6 @@
                     android:layout_height="wrap_content"
                     android:text="21"
                     android:textColor="#3D5270"
-                    android:textStyle="bold"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                     android:layout_gravity="center"
                     />
@@ -201,7 +194,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="IMC (Kg/m2)"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
@@ -223,7 +216,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/txtOnGoing"

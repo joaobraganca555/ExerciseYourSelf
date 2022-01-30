@@ -93,7 +93,9 @@ class MainActivity : AppCompatActivity(),IServiceController {
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
+        navView.menu.getItem(2).isEnabled = false
         navController = findNavController(R.id.nav_host_fragment_activity_main)
+
 
         val floatingButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
         floatingButton.setOnClickListener{
