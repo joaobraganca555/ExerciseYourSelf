@@ -16,7 +16,7 @@
 
     <item
         android:id="@+id/navigation_exercise"
-        android:icon="@drawable/ic_exercise"
+        android:icon="@drawable/ic_baseline_sports_martial_arts"
         android:title="Exercício"/>
     <item
         android:id="@+id/navigation_comunity"
