@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Just Do It</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_health">Saude</string>
+    <string name="title_health">Saúde</string>
     <string name="title_exercise">Exercicio</string>
     <string name="title_discover">Descobrir</string>
     <string name="title_profile">Perfil</string>

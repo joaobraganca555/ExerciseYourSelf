@@ -82,6 +82,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     }
 
     override fun login(email: String, password: String, passwordLayout: TextInputLayout, emailLayout: TextInputLayout) {
+       /*
         if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
             // [START sign_in_with_email]
             auth.signInWithEmailAndPassword(email, password)
@@ -110,6 +111,9 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         } else {
             Toast.makeText(this,"Preencha todos os campos!", Toast.LENGTH_SHORT).show()
         }
+        */
+        var intent = Intent(this, MainActivity::class.java)
+        startActivityForResult(intent, REQUEST_MAIN_MENU)
     }
 
     override fun startRegisterFragment() {

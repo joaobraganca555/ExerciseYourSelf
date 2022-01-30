@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
 
         val floatingButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
         floatingButton.setOnClickListener{
-          //TODO
+            navController.navigate(R.id.navigation_automatic_exercise)
         }
 
         // Passing each menu ID as a set of Ids because each
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_health, R.id.navigation_discover,R.id.navigation_exercise,
-                R.id.navigation_comunity,R.id.navigation_manual_exercise
+                R.id.navigation_comunity
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

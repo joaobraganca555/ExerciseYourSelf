@@ -11,9 +11,9 @@
         tools:layout="@layout/fragment_health" />
     <fragment
         android:id="@+id/navigation_exercise"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ManualExercise"
         android:label="@string/title_exercise"
-        tools:layout="@layout/fragment_exercise" />
+        tools:layout="@layout/fragment_manual_exercise" />
     <fragment
         android:id="@+id/navigation_discover"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.discover.DiscoverFragment"
@@ -25,10 +25,10 @@
         android:label="@string/title_comunity"
         tools:layout="@layout/fragment_comunity" />
     <fragment
-        android:id="@+id/navigation_manual_exercise"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ManualExercise"
+        android:id="@+id/navigation_automatic_exercise"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment"
         android:label="@string/title_add_manual_training"
-        tools:layout="@layout/fragment_manual_exercise"/>
+        tools:layout="@layout/fragment_exercise"/>
     <fragment
         android:id="@+id/navigation_measurements"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.measurements.Measurements"
