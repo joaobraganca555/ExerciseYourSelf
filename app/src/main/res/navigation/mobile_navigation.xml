@@ -24,4 +24,20 @@
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.comunity.ComunityFragment"
         android:label="@string/title_comunity"
         tools:layout="@layout/fragment_comunity" />
+    <fragment
+        android:id="@+id/navigation_manual_exercise"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ManualExercise"
+        android:label="@string/title_add_manual_training"
+        tools:layout="@layout/fragment_manual_exercise"/>
+    <fragment
+        android:id="@+id/navigation_measurements"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.measurements.Measurements"
+        android:label="@string/title_add_manual_training"
+        tools:layout="@layout/fragment_measurements"/>
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ManualExercise"
+        android:label="@string/title_add_manual_training"
+        tools:layout="@layout/fragment_settings"/>
+
 </navigation>

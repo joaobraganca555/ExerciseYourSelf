@@ -104,7 +104,6 @@ class HealthFragment : Fragment(),SensorEventListener {
                 else
                     txtOnGoingActivity.setText("Sem atividades a decorrer")
             })
-
         return root
     }
 

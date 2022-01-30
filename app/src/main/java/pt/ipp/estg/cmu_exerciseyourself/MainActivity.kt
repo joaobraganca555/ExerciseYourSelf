@@ -9,19 +9,27 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import pt.ipp.estg.cmu_exerciseyourself.databinding.ActivityMainBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.services.BackgroundTrackActivity
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
@@ -65,26 +73,41 @@ class MainActivity : AppCompatActivity(),IServiceController {
 
         fitnessRepository = FitnessRepository(application)
 
-        fitnessRepository.getAllWorkouts().observe(this, Observer {
-            Log.d("asd", "all=" + it.toString())
+        fitnessRepository.getAllWorkouts().observe(this, {
+            for (current in it){
+                Log.d("asd", current.workout.toString() + current.coordinates.toString())
+            }
         })
 
-        fitnessRepository.getAllPlannedWorkouts().observe(this, Observer {
+        fitnessRepository.getAllPlannedWorkouts().observe(this, {
             Log.d("asd", "planned=" + it.toString())
+        })
+
+        fitnessRepository.getAllCoord().observe(this, {
+            Log.d("asd", "coord=" + it.toString())
         })
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             loadInfo()
         }
 
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
+        val floatingButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
+        floatingButton.setOnClickListener{
+            navController.navigate(R.id.navigation_manual_exercise)
+        }
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_health, R.id.navigation_discover,R.id.navigation_exercise, R.id.navigation_comunity
+                R.id.navigation_health, R.id.navigation_discover,R.id.navigation_exercise,
+                R.id.navigation_comunity,R.id.navigation_manual_exercise
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -182,18 +205,60 @@ class MainActivity : AppCompatActivity(),IServiceController {
     fun loadInfo(){
         Executors.newFixedThreadPool(1).execute {
             fitnessRepository.deleteAllWorkouts()
+            fitnessRepository.deleteAllCoord()
 
-            fitnessRepository.insertWorkout(Workouts(sport = Sport.GYM.toString(), duration = 15,
+            val workout = Workouts(sport = Sport.GYM.toString(), duration = 15,
                 status = Status.PLANNED.toString(), distance = 15, local = "Vizela", footsteps = 5000,
-                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), id = null))
+                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), workoutId = null)
+            val listCoord=ArrayList<Coordinates>()
+            val workoutWithCoord = WorkoutWithCoord(workout,listCoord)
+            fitnessRepository.insertWorkoutWithCoord(workoutWithCoord)
 
-            fitnessRepository.insertWorkout(Workouts(sport = Sport.GYM.toString(), duration = 25,
+            val workout1 = Workouts(sport = Sport.GYM.toString(), duration = 25,
                 status = Status.SUCCESSFULLY.toString(), distance = 25, local = "Moreira", footsteps = 5000,
-                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), id = null))
+                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), workoutId = null)
+            val listCoord1=ArrayList<Coordinates>()
+            listCoord1.add(Coordinates(13.232,123.21,null,null))
+            listCoord1.add(Coordinates(23.232,143.21,null,null))
+            val workoutWithCoord1= WorkoutWithCoord(workout1,listCoord1)
+            fitnessRepository.insertWorkoutWithCoord(workoutWithCoord1)
 
-            fitnessRepository.insertWorkout(Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = 15,
+            val workout2 = Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = 15,
                 status = Status.PLANNED.toString(), distance = 15, local = "Vizela", footsteps = 5000,
-                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), id = null))
+                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), workoutId = null)
+            val listCoord2=ArrayList<Coordinates>()
+            val workoutWithCoord2 = WorkoutWithCoord(workout2,listCoord2)
+            fitnessRepository.insertWorkoutWithCoord(workoutWithCoord2)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.toolbar_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar menu items
+        when (item.itemId) {
+            R.id.navigation_measurements -> {
+                Log.d("asd", "onOptionsItemSelected: meas")
+                return true
+            }
+            R.id.navigation_settings -> {
+                Log.d("asd", "onOptionsItemSelected: sett")
+                return true
+            }
+            R.id.navigation_logout -> {
+                Log.d("asd", "onOptionsItemSelected: logout")
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }
