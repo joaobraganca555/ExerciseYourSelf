@@ -12,16 +12,19 @@ import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.cmu_exerciseyourself.MainActivity
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IAuthentication
+import pt.ipp.estg.cmu_exerciseyourself.model.models.UserProfile
 
 class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
     // [END declare_auth]
-
+    private lateinit var db: FirebaseFirestore
     private val REQUEST_MAIN_MENU = 1
     private lateinit var imageView: ImageView
 
@@ -33,6 +36,8 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         // Initialize Firebase Auth
         auth = Firebase.auth
         // [END initialize_auth]
+
+        db = Firebase.firestore
 
         var loginFragment = LoginFragment()
 
@@ -115,7 +120,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
             .commit()
     }
 
-    override fun register(email: String, password: String) {
+    override fun register(email: String, password: String, user: UserProfile) {
         if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
             // [START create_user_with_email]
             auth.createUserWithEmailAndPassword(email, password)
@@ -123,13 +128,14 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
-                        val user = auth.currentUser
-                        updateUI(user)
+                        val userLogin = auth.currentUser
+                        addUserToFireStore(user)
+                        updateUI(userLogin)
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
                         Toast.makeText(
-                            baseContext, "Authentication failed.",
+                            baseContext, "Não foi possivel efetuar o registo!",
                             Toast.LENGTH_SHORT
                         ).show()
                         updateUI(null)
@@ -139,5 +145,17 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         } else {
             Toast.makeText(this,"Preencha todos os campos!", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun addUserToFireStore(user: UserProfile) {
+        // Add a new document with a generated ID
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
     }
 }
