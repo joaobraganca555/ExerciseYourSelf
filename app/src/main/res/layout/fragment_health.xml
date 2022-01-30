@@ -11,123 +11,238 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:padding="10dp">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mainContaine2r">
-        android:gravity="center_horizontal"
+        android:id="@+id/mainContainer2"
+        android:gravity="center_horizontal">
 
-        <TextView
-            android:id="@+id/txtFootSteps"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="3213"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+            <ImageView
+                android:src="@drawable/ic_baseline_directions_walk_24"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/txtFootSteps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="28sp"
+                android:layout_gravity="center"
+                android:textColor="#3D5270"
+                android:text="3213"
+                android:layout_margin="10dp"/>
+            <TextView
+                android:id="@+id/txtLabelSteps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Passos"
+                android:layout_gravity="center"/>
+        </LinearLayout>
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/circularProgressBar"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
             android:layout_centerHorizontal="true"
             app:cpb_background_progressbar_color="#b6bbd8"
             app:cpb_background_progressbar_width="5dp"
             app:cpb_progress_direction="to_right"
-            app:cpb_progressbar_color="#3f51b5"
+            app:cpb_progressbar_color="#3043A8"
             app:cpb_progressbar_width="12dp"
-            app:cpb_round_border="true">
-
-        </com.mikhaellopez.circularprogressbar.CircularProgressBar>
+            app:cpb_round_border="true"></com.mikhaellopez.circularprogressbar.CircularProgressBar>
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="20dp">
+        android:id="@+id/mainContainer3"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="10dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+            <ImageView
+                android:src="@drawable/ic_baseline_fire"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/txtNumCal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="28sp"
+                android:layout_gravity="center"
+                android:textColor="#3D5270"
+                android:text="3213"
+                android:layout_margin="10dp"/>
+            <TextView
+                android:id="@+id/txtLabelCal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cal"
+                android:layout_gravity="center"/>
+        </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_weight="0.5"
-            android:layout_height="match_parent"
-            tools:ignore="ExtraText"
-            android:checkable="true"
-            android:clickable="true"
-            android:focusable="true">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Peso"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_gravity="center"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="27/1/2022"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_gravity="center"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="77 kg"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_gravity="center"
-                    />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_weight="0.5"
-            android:layout_height="match_parent"
-            tools:ignore="ExtraText"
-            android:checkable="true"
-            android:clickable="true"
-            android:focusable="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Altura"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_gravity="center"
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="180 cm"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_gravity="center"
-                    />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/circularProgressBarCal"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_centerHorizontal="true"
+            app:cpb_background_progressbar_color="#b6bbd8"
+            app:cpb_background_progressbar_width="5dp"
+            app:cpb_progress_direction="to_right"
+            app:cpb_progressbar_color="#3043A8"
+            app:cpb_progressbar_width="12dp"
+            app:cpb_round_border="true"></com.mikhaellopez.circularprogressbar.CircularProgressBar>
+    </RelativeLayout>
     </LinearLayout>
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        tools:ignore="ExtraText"
+        android:checkable="true"
+        android:clickable="true"
+        android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_gravity="left">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="77"
+                    android:textColor="#3D5270"
+                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_gravity="center"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Peso (Kg)"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1.80"
+                    android:textColor="#3D5270"
+                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Altura (m)"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="right"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21"
+                    android:textColor="#3D5270"
+                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="IMC (Kg/m2)"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        tools:ignore="ExtraText"
+        android:checkable="true"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtOnGoing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A Decorrer"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:layout_gravity="left" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Sem Atividades"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_gravity="left"
+                />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -147,57 +262,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Número total de passos"
+                android:text="Desafios Planeados"
                 android:textAppearance="?attr/textAppearanceHeadline6"
-                android:layout_gravity="center"
-                />
-            <TextView
-                android:layout_width="wrap_content"
+                android:layout_gravity="left" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recViewChallenges"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Você deu 899013 passos"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_gravity="center"
-                />
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        tools:ignore="ExtraText"
-        android:checkable="true"
-        android:clickable="false"
-        android:focusable="false">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Número total de passos"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:layout_gravity="center"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Você deu 899013 passos"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_gravity="center"
-                />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>
 

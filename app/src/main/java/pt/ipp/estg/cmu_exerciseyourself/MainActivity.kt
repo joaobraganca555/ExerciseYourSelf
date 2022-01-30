@@ -65,10 +65,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
 
         fitnessRepository = FitnessRepository(application)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            loadInfo()
-        }
-
         fitnessRepository.getAllWorkouts().observe(this, Observer {
             Log.d("asd", "all=" + it.toString())
         })
@@ -76,6 +72,10 @@ class MainActivity : AppCompatActivity(),IServiceController {
         fitnessRepository.getAllPlannedWorkouts().observe(this, Observer {
             Log.d("asd", "planned=" + it.toString())
         })
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            loadInfo()
+        }
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)

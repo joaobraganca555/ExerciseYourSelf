@@ -11,12 +11,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentHealthBinding
+import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
+import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
+import pt.ipp.estg.cmu_exerciseyourself.utils.ChallengesAdapter
 
 class HealthFragment : Fragment(),SensorEventListener {
     private lateinit var binding: FragmentHealthBinding
@@ -70,7 +80,31 @@ class HealthFragment : Fragment(),SensorEventListener {
             progressMax = 10000f
         }
 
+        var recView = root.findViewById<RecyclerView>(R.id.recViewChallenges)
+        var workoutsAdapter = ChallengesAdapter(ArrayList())
+        var txtOnGoingActivity = root.findViewById<TextView>(R.id.txtOnGoing)
+
+        recView.apply {
+            adapter = workoutsAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        }
+
         txtFootSteps = root.findViewById(R.id.txtFootSteps)
+
+        ViewModelProvider(this).get(WorkoutsViewModel::class.java).getAllPlannedWorkouts()
+            .observe(viewLifecycleOwner, Observer {
+                workoutsAdapter.updateList(it)
+            })
+
+        ViewModelProvider(this).get(WorkoutsViewModel::class.java).getOnGoingWorkout()
+            .observe(viewLifecycleOwner, Observer {
+                if(it != null)
+                    txtOnGoingActivity.setText("A decorrer " + it.sport + " em " + it.local)
+                else
+                    txtOnGoingActivity.setText("Sem atividades a decorrer")
+            })
+
         return root
     }
 
