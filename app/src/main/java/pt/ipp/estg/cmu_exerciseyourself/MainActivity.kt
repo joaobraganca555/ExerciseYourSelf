@@ -239,7 +239,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle presses on the action bar menu items
         when (item.itemId) {
             R.id.navigation_measurements -> {
                 Log.d("asd", "onOptionsItemSelected: meas")

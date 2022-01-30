@@ -2,17 +2,23 @@ package pt.ipp.estg.cmu_exerciseyourself.model.room
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.room.Insert
+import androidx.room.Query
+import pt.ipp.estg.cmu_exerciseyourself.model.room.dao.MeasurementsDao
 import pt.ipp.estg.cmu_exerciseyourself.model.room.dao.WorkoutsDao
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Measurements
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 
 class FitnessRepository(val application: Application) {
     val workoutsDao: WorkoutsDao
+    val measurementsDao: MeasurementsDao
 
     init{
         workoutsDao = FitnessDb.getInstance(application).WorkoutsDao()
+        measurementsDao = FitnessDb.getInstance(application).MeasurementsDao()
     }
 
     fun getAllWorkouts(): LiveData<List<WorkoutWithCoord>>{
@@ -53,5 +59,17 @@ class FitnessRepository(val application: Application) {
 
     fun getAllCoord():LiveData<List<Coordinates>>{
         return workoutsDao.getAllCoord()
+    }
+
+    fun insertMeasurement(measurement: Measurements){
+        measurementsDao.insertMeasurement(measurement)
+    }
+
+    fun getAllMeasurements():LiveData<List<Measurements>>{
+        return measurementsDao.getAllMeasurements()
+    }
+
+    fun getCurrentMeasurement():LiveData<Measurements>{
+        return measurementsDao.getCurrentMeasurement()
     }
 }
