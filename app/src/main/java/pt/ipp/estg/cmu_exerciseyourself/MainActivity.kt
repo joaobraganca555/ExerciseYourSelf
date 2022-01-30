@@ -19,6 +19,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
     lateinit var fitnessRepository:FitnessRepository
     lateinit var binding: ActivityMainBinding
     var locationService: BackgroundTrackActivity? = null
+    lateinit var navController:NavController
 
     val broadcastReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -83,10 +85,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
             Log.d("asd", "planned=" + it.toString())
         })
 
-        fitnessRepository.getAllCoord().observe(this, {
-            Log.d("asd", "coord=" + it.toString())
-        })
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             loadInfo()
         }
@@ -95,11 +93,11 @@ class MainActivity : AppCompatActivity(),IServiceController {
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        navController = findNavController(R.id.nav_host_fragment_activity_main)
 
         val floatingButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
         floatingButton.setOnClickListener{
-            navController.navigate(R.id.navigation_manual_exercise)
+          //TODO
         }
 
         // Passing each menu ID as a set of Ids because each
@@ -241,7 +239,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.navigation_measurements -> {
-                Log.d("asd", "onOptionsItemSelected: meas")
+                navController.navigate(R.id.navigation_measurements)
                 return true
             }
             R.id.navigation_settings -> {

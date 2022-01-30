@@ -7,10 +7,9 @@
     <string name="title_profile">Perfil</string>
     <string name="title_comunity">Comunidade</string>
     <string name="title_add_manual_training">Novo Treino</string>
-
+    <string name="title_measurements">Minhas Medições</string>
 
     <string name="fab_content_desc">"Butao criar atividade"</string>
-
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

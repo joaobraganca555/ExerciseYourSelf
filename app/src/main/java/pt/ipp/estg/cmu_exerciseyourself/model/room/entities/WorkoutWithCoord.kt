@@ -11,4 +11,4 @@ class WorkoutWithCoord (
         entityColumn = "workoutId"
     )
     val coordinates:List<Coordinates>
-)
+    )

@@ -32,12 +32,11 @@
     <fragment
         android:id="@+id/navigation_measurements"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.measurements.Measurements"
-        android:label="@string/title_add_manual_training"
+        android:label="@string/title_measurements"
         tools:layout="@layout/fragment_measurements"/>
     <fragment
         android:id="@+id/navigation_settings"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ManualExercise"
         android:label="@string/title_add_manual_training"
         tools:layout="@layout/fragment_settings"/>
-
 </navigation>
