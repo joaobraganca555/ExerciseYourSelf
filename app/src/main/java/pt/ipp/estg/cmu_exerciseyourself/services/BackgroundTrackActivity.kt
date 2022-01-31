@@ -138,10 +138,6 @@ class BackgroundTrackActivity: Service() {
             totalDuration = ChronoUnit.MINUTES.between(beginDate, LocalDateTime.now())
         }
 
-        Log.d("asd", "duration = $totalDuration")
-        Log.d("asd", "distance = $totalDistance")
-        Log.d("asd", "begin date: $beginDate ")
-
         stopForeground(STOP_FOREGROUND_REMOVE);
         stopSelf()
 
@@ -149,6 +145,8 @@ class BackgroundTrackActivity: Service() {
         val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
         sendBroadcast(i)
         locationHelper.stopUpdates()
+
+
     }
 
     private fun calculateDistance(lat1:Double,lon1:Double,lat2:Double,lon2:Double):Double{

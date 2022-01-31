@@ -16,7 +16,7 @@
             android:value="AIzaSyAVtzezHmsTxw39qVFdCyPa0b__DspMCW0"/>
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
         <activity
             android:name=".MainActivity"
             android:exported="false"
