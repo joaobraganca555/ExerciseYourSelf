@@ -97,11 +97,6 @@ class MainActivity : AppCompatActivity(),IServiceController {
         navController = findNavController(R.id.nav_host_fragment_activity_main)
 
 
-        val floatingButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
-        floatingButton.setOnClickListener{
-            navController.navigate(R.id.navigation_automatic_exercise)
-        }
-
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -112,6 +107,12 @@ class MainActivity : AppCompatActivity(),IServiceController {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+        val floatingButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
+        floatingButton.setOnClickListener{
+            navController.navigate(R.id.navigation_automatic_exercise)
+        }
 
         val serviceConnection by lazy{
             object: ServiceConnection {
