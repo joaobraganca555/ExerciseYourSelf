@@ -19,11 +19,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import pt.ipp.estg.cmu_exerciseyourself.databinding.ActivityMainBinding
@@ -33,6 +35,7 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.services.BackgroundTrackActivity
+import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import pt.ipp.estg.cmu_exerciseyourself.utils.hasPermission
@@ -45,10 +48,20 @@ class MainActivity : AppCompatActivity(),IServiceController {
     lateinit var binding: ActivityMainBinding
     var locationService: BackgroundTrackActivity? = null
     lateinit var navController:NavController
+    var workoutsViewModel:WorkoutsViewModel? = null
 
     val broadcastReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            Toast.makeText(baseContext,"Service Finished", Toast.LENGTH_SHORT).show()
+            workoutsViewModel?.let {
+                val currentLat =  intent?.getDoubleExtra("lat",0.0)
+                val currentLong =  intent?.getDoubleExtra("long",0.0)
+
+                if(currentLat != 0.0 && currentLong != 0.0){
+                    it.setCurrentPosition(LatLng(currentLat!!,currentLong!!))
+                }else{
+                    Toast.makeText(baseContext,"Service Finished", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -73,6 +86,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        workoutsViewModel = ViewModelProvider(this).get(WorkoutsViewModel::class.java)
         fitnessRepository = FitnessRepository(application)
 
         fitnessRepository.getAllWorkouts().observe(this, {

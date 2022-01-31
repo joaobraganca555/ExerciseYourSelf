@@ -13,8 +13,10 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment
+import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.LocationHelper
 import pt.ipp.estg.cmu_exerciseyourself.utils.MyLocationListener
 import java.time.LocalDateTime
@@ -30,6 +32,7 @@ class BackgroundTrackActivity: Service() {
     private var totalDistance:Double = 0.0
     private var totalDuration:Long = 0
     private var beginDate: LocalDateTime? = null
+    private lateinit var workoutViewModel:WorkoutsViewModel
 
     val broadReceiver = object: BroadcastReceiver(){
         @RequiresApi(Build.VERSION_CODES.N)
@@ -89,6 +92,10 @@ class BackgroundTrackActivity: Service() {
                         }
                         previousLat = currentLat
                         previousLong = currentLong
+                        val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
+                        i.putExtra("lat",currentLat)
+                        i.putExtra("long",currentLong)
+                        sendBroadcast(i)
                     }
                     mLocation?.let {
                         Log.d("asd", "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance")
@@ -140,7 +147,7 @@ class BackgroundTrackActivity: Service() {
 
         //Build a intent with the action equals to intent filter action defined on the activity destination
         val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
-        sendBroadcast(i);
+        sendBroadcast(i)
         locationHelper.stopUpdates()
     }
 

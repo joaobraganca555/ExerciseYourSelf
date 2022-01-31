@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
@@ -21,10 +23,21 @@ class ExerciseFragment : Fragment(),OnMapReadyCallback {
     private val binding get() = _binding!!
     private lateinit var myContext: IServiceController
     lateinit var supportMapFragment:SupportMapFragment
+    lateinit var workoutViewModel:WorkoutsViewModel
+    val current = LatLng(37.129665, -8.669586)
+    var marker = MarkerOptions().position(LatLng(37.129665, -8.669586))
+    var listPoints = ArrayList<LatLng>()
+    lateinit var polyOptions : PolylineOptions
+    var googlemap:GoogleMap? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         myContext = context as IServiceController
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        workoutViewModel = ViewModelProvider(requireActivity()).get(WorkoutsViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -47,6 +60,19 @@ class ExerciseFragment : Fragment(),OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
 
+        polyOptions = PolylineOptions()
+        workoutViewModel.getCurrentPosition().observe(viewLifecycleOwner,{
+            googlemap?.apply {
+                animateCamera(CameraUpdateFactory.newLatLngZoom(it,16f))
+                clear()
+                addMarker(
+                    MarkerOptions().position(it)
+                )
+                polyOptions.add(it)
+                addPolyline(polyOptions)
+            }
+        })
+
         return root
     }
 
@@ -56,14 +82,13 @@ class ExerciseFragment : Fragment(),OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
-        val vizela = LatLng(41.39096, -8.26389)
+        this.googlemap = googleMap
             googleMap?.apply {
                 addMarker(
-                    MarkerOptions()
-                        .position(vizela)
-                        .title("Eu")
+                   marker
                 )
-                animateCamera( CameraUpdateFactory.newLatLngZoom(vizela,10f));
+                addPolyline(polyOptions)
+                animateCamera( CameraUpdateFactory.newLatLngZoom(current,16f));
             }
     }
 }

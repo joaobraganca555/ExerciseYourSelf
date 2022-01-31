@@ -47,12 +47,11 @@ class MeasurementsFragment : Fragment() {
         saveBtn = binding.saveBtn
 
         repository.getCurrentMeasurement().observe(viewLifecycleOwner, Observer {
-            Log.d("MEASURE", "utltim"+it.toString())
-            binding.height.setText(it.height.toString())
-            binding.weight.setText(it.weight.toString())
-            binding.belly.setText(it.belly.toString())
-            binding.chest.setText(it.chest.toString())
-            binding.fat.setText(it.percFat.toString())
+            binding.height.setText(it?.height.toString())
+            binding.weight.setText(it?.weight.toString())
+            binding.belly.setText(it?.belly.toString())
+            binding.chest.setText(it?.chest.toString())
+            binding.fat.setText(it?.percFat.toString())
         })
 
         saveBtn.setOnClickListener {
