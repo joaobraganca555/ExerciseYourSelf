@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.ResponseObject
-import pt.ipp.estg.trashtalkerapp.retrofitService.TrashtalkerAPI
+import pt.ipp.estg.trashtalkerapp.retrofitService.IGeopify
 import retrofit2.Call
 import retrofit2.Response
 import java.util.concurrent.Executors
@@ -62,9 +62,13 @@ class DiscoverFragment : Fragment() {
 
 
         findButton.setOnClickListener {
+            var filter = "circle:-8.20094,41.36735,"
+            var bias = "proximity:-8.20094,41.36735"
             Log.d("asd",radiusText.text.toString())
-                var retrofitClient = TrashtalkerAPI.getApi()
-                val responseCallback = retrofitClient.findPlaces(radiusText.text.toString())
+            var retrofitClient = IGeopify.getApi()
+            filter += radiusText.text.toString()
+            Log.d("asd", filter)
+            val responseCallback = retrofitClient.findPlaces(filter, bias)
                 responseCallback.enqueue(object: retrofit2.Callback<ResponseObject> {
                     override fun onResponse(call: Call<ResponseObject>, response: Response<ResponseObject>) {
                         if(response.code() === 200){
