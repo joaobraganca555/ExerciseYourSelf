@@ -50,11 +50,11 @@ class ExerciseFragment : Fragment(),OnMapReadyCallback {
         val root: View = binding.root
 
         binding.btnStart.setOnClickListener {
-            myContext.startManualExercise()
+            myContext.startAutomaticExercise()
         }
 
         binding.btnStop.setOnClickListener {
-            myContext.stopManualExercise()
+            myContext.stopAutomaticExercise()
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment

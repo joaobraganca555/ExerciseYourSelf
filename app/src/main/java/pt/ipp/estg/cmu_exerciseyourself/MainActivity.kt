@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
         unregisterReceiver(broadcastReceiver)
     }
 
-    override fun startManualExercise() {
+    override fun startAutomaticExercise() {
         if(locationRequestAccepted()) {
             startService(Intent(this,BackgroundTrackActivity::class.java))
         }else{
@@ -211,7 +211,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
         }
     }
 
-    override fun stopManualExercise() {
+    override fun stopAutomaticExercise() {
         val intent = Intent("pt.ipp.estg.sensorapp.src.MainActivity");
         sendBroadcast(intent)
     }
