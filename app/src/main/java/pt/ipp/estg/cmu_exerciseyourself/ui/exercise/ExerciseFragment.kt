@@ -73,6 +73,10 @@ class ExerciseFragment : Fragment(),OnMapReadyCallback {
             }
         })
 
+        workoutViewModel.getDistance().observe(viewLifecycleOwner,{
+            binding.totalDistance.setText(it.toString())
+        })
+
         return root
     }
 

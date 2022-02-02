@@ -95,6 +95,9 @@ class BackgroundTrackActivity: Service() {
                         val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
                         i.putExtra("lat",currentLat)
                         i.putExtra("long",currentLong)
+                        i.putExtra("distance", totalDistance)
+                        //i.putExtra("duration", totalDuration)
+
                         sendBroadcast(i)
                     }
                     mLocation?.let {

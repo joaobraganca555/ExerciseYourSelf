@@ -55,9 +55,11 @@ class MainActivity : AppCompatActivity(),IServiceController {
             workoutsViewModel?.let {
                 val currentLat =  intent?.getDoubleExtra("lat",0.0)
                 val currentLong =  intent?.getDoubleExtra("long",0.0)
+                val distance =  intent?.getDoubleExtra("distance",0.0)
 
-                if(currentLat != 0.0 && currentLong != 0.0){
+                if(currentLat != 0.0 && currentLong != 0.0 && distance != null){
                     it.setCurrentPosition(LatLng(currentLat!!,currentLong!!))
+                    it.setDistance(distance)
                 }else{
                     Toast.makeText(baseContext,"Service Finished", Toast.LENGTH_SHORT).show()
                 }
