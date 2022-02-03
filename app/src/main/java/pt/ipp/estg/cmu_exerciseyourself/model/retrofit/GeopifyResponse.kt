@@ -3,7 +3,7 @@ package pt.ipp.estg.cmu_exerciseyourself.model.retrofit
 import com.google.gson.annotations.SerializedName
 
 
-data class ResponseObject (
+data class GeopifyResponseObject (
     @SerializedName("features" ) var features : ArrayList<Features> = arrayListOf()
 )
 
