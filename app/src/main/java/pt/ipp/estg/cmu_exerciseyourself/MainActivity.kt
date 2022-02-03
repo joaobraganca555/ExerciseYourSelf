@@ -11,14 +11,11 @@ import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -91,19 +88,19 @@ class MainActivity : AppCompatActivity(),IServiceController {
         workoutsViewModel = ViewModelProvider(this).get(WorkoutsViewModel::class.java)
         fitnessRepository = FitnessRepository(application)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            loadInfo()
+        }
+
         fitnessRepository.getAllWorkouts().observe(this, {
             for (current in it){
-                Log.d("asd", current.workout.toString() + current.coordinates.toString())
+                Log.d("asd", it.toString())
             }
         })
 
         fitnessRepository.getAllPlannedWorkouts().observe(this, {
             Log.d("asd", "planned=" + it.toString())
         })
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            loadInfo()
-        }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -225,14 +222,14 @@ class MainActivity : AppCompatActivity(),IServiceController {
             fitnessRepository.deleteAllCoord()
 
             val workout = Workouts(sport = Sport.GYM.toString(), duration = 15,
-                status = Status.PLANNED.toString(), distance = 15, local = "Vizela", footsteps = 5000,
-                beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), workoutId = null)
+                status = Status.PLANNED.toString(), distance = 450, local = "Vizela", footsteps = 5000,
+                beginDate = "2022-01-03T10:15:30", finishedDate =  "2022-01-03T12:15:30", workoutId = null)
             val listCoord=ArrayList<Coordinates>()
             val workoutWithCoord = WorkoutWithCoord(workout,listCoord)
             fitnessRepository.insertWorkoutWithCoord(workoutWithCoord)
 
             val workout1 = Workouts(sport = Sport.GYM.toString(), duration = 25,
-                status = Status.SUCCESSFULLY.toString(), distance = 25, local = "Moreira", footsteps = 5000,
+                status = Status.SUCCESSFULLY.toString(), distance = 250, local = "Moreira", footsteps = 5000,
                 beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), workoutId = null)
             val listCoord1=ArrayList<Coordinates>()
             listCoord1.add(Coordinates(13.232,123.21,null,null))
@@ -241,7 +238,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
             fitnessRepository.insertWorkoutWithCoord(workoutWithCoord1)
 
             val workout2 = Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = 15,
-                status = Status.PLANNED.toString(), distance = 15, local = "Vizela", footsteps = 5000,
+                status = Status.PLANNED.toString(), distance = 300, local = "Vizela", footsteps = 5000,
                 beginDate = LocalDateTime.now().toString(), finishedDate =  LocalDateTime.now().toString(), workoutId = null)
             val listCoord2=ArrayList<Coordinates>()
             val workoutWithCoord2 = WorkoutWithCoord(workout2,listCoord2)

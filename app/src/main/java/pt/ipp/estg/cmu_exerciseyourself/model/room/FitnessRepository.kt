@@ -2,8 +2,6 @@ package pt.ipp.estg.cmu_exerciseyourself.model.room
 
 import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.room.Insert
-import androidx.room.Query
 import pt.ipp.estg.cmu_exerciseyourself.model.room.dao.MeasurementsDao
 import pt.ipp.estg.cmu_exerciseyourself.model.room.dao.WorkoutsDao
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
@@ -21,7 +19,7 @@ class FitnessRepository(val application: Application) {
         measurementsDao = FitnessDb.getInstance(application).MeasurementsDao()
     }
 
-    fun getAllWorkouts(): LiveData<List<WorkoutWithCoord>>{
+    fun getAllWorkouts(): LiveData<List<Workouts>>{
         return workoutsDao.getAllWorkouts()
     }
 
@@ -29,15 +27,19 @@ class FitnessRepository(val application: Application) {
         return workoutsDao.getAllPlannedWorkouts()
     }
 
-    fun getAllSuccessfullyWorkouts(): LiveData<List<WorkoutWithCoord>>{
+    fun getAllFinishedWorkouts():LiveData<List<Workouts>>{
+        return workoutsDao.getAllFinishedWorkouts()
+    }
+
+    fun getAllSuccessfullyWorkouts(): LiveData<List<Workouts>>{
         return workoutsDao.getAllSuccessfullyWorkouts()
     }
 
-    fun getAllFailedWorkouts(): LiveData<List<WorkoutWithCoord>>{
+    fun getAllFailedWorkouts(): LiveData<List<Workouts>>{
         return workoutsDao.getAllFailedWorkouts()
     }
 
-    fun getAllExpiredWorkouts(): LiveData<List<WorkoutWithCoord>>{
+    fun getAllExpiredWorkouts(): LiveData<List<Workouts>>{
         return workoutsDao.getAllExpiredWorkouts()
     }
 

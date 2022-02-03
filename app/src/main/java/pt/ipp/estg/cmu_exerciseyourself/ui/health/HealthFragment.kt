@@ -93,7 +93,7 @@ class HealthFragment : Fragment(),SensorEventListener {
         txtFootSteps = root.findViewById(R.id.txtFootSteps)
 
         ViewModelProvider(this).get(WorkoutsViewModel::class.java).getAllPlannedWorkouts()
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 workoutsAdapter.updateList(it)
             })
 

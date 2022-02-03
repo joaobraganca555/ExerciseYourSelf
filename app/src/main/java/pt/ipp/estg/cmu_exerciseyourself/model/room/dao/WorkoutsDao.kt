@@ -11,7 +11,7 @@ import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 interface WorkoutsDao {
     @Transaction
     @Query("SELECT * FROM Workouts")
-    fun getAllWorkouts():LiveData<List<WorkoutWithCoord>>
+    fun getAllWorkouts():LiveData<List<Workouts>>
 
     @Transaction
     @Query("SELECT * FROM Workouts WHERE Workouts.status = 'PLANNED'")
@@ -19,15 +19,19 @@ interface WorkoutsDao {
 
     @Transaction
     @Query("SELECT * FROM Workouts WHERE Workouts.status = 'SUCCESSFULLY'")
-    fun getAllSuccessfullyWorkouts():LiveData<List<WorkoutWithCoord>>
+    fun getAllSuccessfullyWorkouts():LiveData<List<Workouts>>
 
     @Transaction
     @Query("SELECT * FROM Workouts WHERE Workouts.status = 'FAILED'")
-    fun getAllFailedWorkouts():LiveData<List<WorkoutWithCoord>>
+    fun getAllFailedWorkouts():LiveData<List<Workouts>>
 
     @Transaction
     @Query("SELECT * FROM Workouts WHERE Workouts.status = 'EXPIRED'")
-    fun getAllExpiredWorkouts():LiveData<List<WorkoutWithCoord>>
+    fun getAllExpiredWorkouts():LiveData<List<Workouts>>
+
+    @Transaction
+    @Query("SELECT * FROM Workouts WHERE Workouts.status = 'FAILED' AND Workouts.status = 'SUCCESSFULLY'")
+    fun getAllFinishedWorkouts():LiveData<List<Workouts>>
 
     @Transaction
     @Query("UPDATE Workouts SET status = :stateOfWorkout WHERE Workouts.workoutId = :id")

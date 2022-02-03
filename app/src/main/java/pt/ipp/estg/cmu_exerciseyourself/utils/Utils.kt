@@ -24,24 +24,6 @@ enum class Status{
     EXPIRED
 }
 
-fun monthsToString(value:Int):String{
-    return when(value){
-        1 -> "J"
-        2 -> "F"
-        3 -> "M"
-        4 -> "A"
-        5 -> "M"
-        6 -> "J"
-        7 -> "J"
-        8 -> "A"
-        9 -> "S"
-        10 -> "O"
-        11 -> "N"
-        12 -> "D"
-        else -> "other"
-    }
-}
-
 fun Context.hasPermission(permission: String): Boolean {
 
     // Background permissions didn't exit prior to Q, so it's approved by default.

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 
 class WorkoutsViewModel(application: Application):AndroidViewModel(application) {
@@ -21,7 +22,9 @@ class WorkoutsViewModel(application: Application):AndroidViewModel(application) 
     }
 
     fun isTrackingActivity():Boolean = (onGoingWorkout.value != null)
+
     fun getAllPlannedWorkouts():LiveData<List<Workouts>> = plannedWorkouts
+
     fun getOnGoingWorkout():LiveData<Workouts>{
         return this.onGoingWorkout
     }
