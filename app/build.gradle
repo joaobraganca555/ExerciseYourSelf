@@ -41,6 +41,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 dependencies {
+
     //For room db
     def roomVersion = "2.4.0-alpha03"
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -85,4 +86,7 @@ dependencies {
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    //Third party lib for charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

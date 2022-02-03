@@ -5,56 +5,90 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.utils.ColorTemplate
 import pt.ipp.estg.cmu_exerciseyourself.R
+import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.utils.DistanceMonth
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import pt.ipp.estg.cmu_exerciseyourself.utils.monthsToString
+import java.util.*
+import javax.xml.datatype.DatatypeConstants.MONTHS
+import kotlin.collections.ArrayList
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ManualExercise.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class ManualExercise : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    var barChart:BarChart? = null
+    var entryList:ArrayList<BarEntry>? = null
+    var labelsNames:ArrayList<String>? = ArrayList(
+        Arrays.asList("Jan","Fev","Mar","Abr","Mai","Jun","Jul","Aug","Set","Out","Nov","Dez"))
+    var listDistancesbyMonth:ArrayList<DistanceMonth> = ArrayList()
+    private lateinit var fitnessRepository:FitnessRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val view = inflater.inflate(R.layout.fragment_manual_exercise, container, false)
+        barChart = view.findViewById<BarChart>(R.id.barChartDistance)
+        fitnessRepository = FitnessRepository(requireActivity().application)
+
+        entryList = ArrayList()
+        entryList?.add(BarEntry(1f, 150f))
+        entryList?.add(BarEntry(2f, 26f))
+        entryList?.add(BarEntry(3f, 26f))
+        entryList?.add(BarEntry(4f, 155f))
+        entryList?.add(BarEntry(5f, 163f))
+        entryList?.add(BarEntry(6f, 25f))
+        entryList?.add(BarEntry(7f, 55f))
+        entryList?.add(BarEntry(8f, 25f))
+        entryList?.add(BarEntry(9f, 25f))
+        entryList?.add(BarEntry(10f, 55f))
+        entryList?.add(BarEntry(11f, 25f))
+        entryList?.add(BarEntry(12f, 95f))
+
+        val barDataSet = BarDataSet(entryList, "")
+        barDataSet.setColors(*ColorTemplate.LIBERTY_COLORS)
+        val data = BarData(barDataSet)
+        barChart?.data = data
+        setupChart()
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_manual_exercise, container, false)
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ManualExercise.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ManualExercise().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+
+    fun setupChart(){
+        barChart?.let{
+            val xAxis: XAxis = it.getXAxis()
+            xAxis.setCenterAxisLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f;
+            xAxis.setLabelCount(labelsNames?.size!!)
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+            xAxis.setGranularity(1f)
+            xAxis.setAvoidFirstLastClipping(true)
+            xAxis.labelRotationAngle = -40f
+            xAxis.valueFormatter = IndexAxisValueFormatter(labelsNames)
+            it.axisLeft.setDrawLabels(false)
+            it.axisLeft.setDrawGridLines(false)
+            it.xAxis.setDrawAxisLine(false)
+
+            it.axisRight.isEnabled = false
+            it.legend.isEnabled = false
+            it.description.isEnabled = false
+            it.animateY(2000)
+            it.invalidate()
+        }
+        }
     }
-}
