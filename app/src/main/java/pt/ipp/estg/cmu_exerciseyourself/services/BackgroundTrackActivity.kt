@@ -13,12 +13,13 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModelProvider
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.LocationHelper
 import pt.ipp.estg.cmu_exerciseyourself.utils.MyLocationListener
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -95,17 +96,17 @@ class BackgroundTrackActivity: Service() {
                         val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
                         i.putExtra("lat",currentLat)
                         i.putExtra("long",currentLong)
-                        i.putExtra("distance", totalDistance)
+
+                        val distance = BigDecimal(totalDistance).setScale(2, RoundingMode.HALF_EVEN)
+                        i.putExtra("distance", distance.toDouble())
+
                         //i.putExtra("duration", totalDuration)
 
                         sendBroadcast(i)
                     }
                     mLocation?.let {
                         Log.d("asd", "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance")
-                        Toast.makeText(
-                            baseContext, totalDistance.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        //Toast.makeText(baseContext, totalDistance.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             })
@@ -148,7 +149,6 @@ class BackgroundTrackActivity: Service() {
         val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
         sendBroadcast(i)
         locationHelper.stopUpdates()
-
 
     }
 
