@@ -13,6 +13,7 @@ class WorkoutsViewModel(application: Application):AndroidViewModel(application) 
     val plannedWorkouts:LiveData<List<Workouts>>
     val onGoingWorkout:MutableLiveData<Workouts> = MutableLiveData()
     val currentPosition:MutableLiveData<LatLng> = MutableLiveData()
+    val distance:MutableLiveData<Double> = MutableLiveData()
 
     init{
         fitnessRepo = FitnessRepository(application)
@@ -34,6 +35,14 @@ class WorkoutsViewModel(application: Application):AndroidViewModel(application) 
 
     fun getCurrentPosition():LiveData<LatLng>{
         return this.currentPosition
+    }
+
+    fun setDistance(distance:Double){
+        this.distance.value = distance
+    }
+
+    fun getDistance():LiveData<Double>{
+        return this.distance
     }
 
 }
