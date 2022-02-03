@@ -20,11 +20,13 @@ import kotlinx.coroutines.newFixedThreadPoolContext
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
+import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
+import kotlin.math.roundToInt
 
 class ExerciseFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentExerciseBinding? = null
@@ -43,9 +45,16 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
     lateinit var timerTask: TimerTask
     var time: Double = 0.0
 
+    var distance = 0.0
+    var caloriesBurned = 0
+    var weight = 0.0
+
+    lateinit var repository:FitnessRepository
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         myContext = context as IServiceController
+        repository = FitnessRepository(requireActivity().application)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +71,10 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
 
         _binding = FragmentExerciseBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
+            weight = it?.weight!!
+        }
 
         binding.btnStart.setOnClickListener {
             startTimer()
@@ -81,7 +94,7 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
 
         polyOptions = PolylineOptions()
-        workoutViewModel.getCurrentPosition().observe(viewLifecycleOwner, {
+        workoutViewModel.getCurrentPosition().observe(viewLifecycleOwner) {
             googlemap?.apply {
                 animateCamera(CameraUpdateFactory.newLatLngZoom(it, 16f))
                 clear()
@@ -91,16 +104,23 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
                 polyOptions.add(it)
                 addPolyline(polyOptions)
             }
-        })
+        }
 
-        workoutViewModel.getDistance().observe(viewLifecycleOwner, {
-            binding.totalDistance.setText(it.toString())
-        })
+        workoutViewModel.getDistance().observe(viewLifecycleOwner) {
+            distance = it.toString().toDouble()
+            binding.totalDistance.text = it.toString()
+            binding.calories.text = getCalories()
+        }
 
         return root
     }
 
-    fun startTimer() {
+    private fun getCalories():String {
+        caloriesBurned = (weight * distance).toInt()
+        return caloriesBurned.toString()
+    }
+
+    private fun startTimer() {
         time = 0.0
         timerTask = object : TimerTask() {
             override fun run() {
@@ -118,7 +138,7 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun getTimerText(): String {
-        var rounded = Math.round(time).toInt()
+        var rounded = time.roundToInt()
 
         var seconds = ((rounded % 86400) % 3600) % 60
         var minutes = ((rounded % 86400) % 3600) / 60
@@ -127,7 +147,7 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
         return formatTime(seconds, minutes, hours)
     }
 
-    fun formatTime(seconds: Int, minutes: Int, hours: Int): String {
+    private fun formatTime(seconds: Int, minutes: Int, hours: Int): String {
         return String.format("%02d", hours) + " : " + String.format(
             "%02d",
             minutes

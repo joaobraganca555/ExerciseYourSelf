@@ -51,8 +51,6 @@
                     android:text="km"></TextView>
             </LinearLayout>
 
-
-
             <TextView
                 android:id="@+id/timer"
                 android:layout_width="wrap_content"
@@ -61,8 +59,36 @@
                 android:textSize="25dp"
                 android:layout_gravity="right"
                 android:textColor="@android:color/black">
-
             </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="right">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></View>
+                <TextView
+                    android:id="@+id/calories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="25dp"
+                    android:layout_gravity="right"
+                    android:textColor="@android:color/black">
+                </TextView>
+
+                <ImageView
+                    android:src="@drawable/ic_baseline_fire"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right"
+                    ></ImageView>
+
+            </LinearLayout>
 
 
         </LinearLayout>

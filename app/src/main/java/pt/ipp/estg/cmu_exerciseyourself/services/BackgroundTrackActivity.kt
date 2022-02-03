@@ -65,7 +65,7 @@ class BackgroundTrackActivity: Service() {
 
         val notification: Notification = Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("Foreground Service")
-            .setContentText("Content")
+            .setContentText("Exercicio a decorrer")
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentIntent(pendingIntent)
             .build()
@@ -106,7 +106,7 @@ class BackgroundTrackActivity: Service() {
                     }
                     mLocation?.let {
                         Log.d("asd", "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance")
-                        //Toast.makeText(baseContext, totalDistance.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(baseContext, totalDistance.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             })
