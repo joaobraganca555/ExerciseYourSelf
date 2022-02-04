@@ -66,6 +66,7 @@ class DiscoverFragment : Fragment() {
         getLastKnownLocation()
 
         findMySelfButton.setOnClickListener {
+            getLastKnownLocation()
             this.googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
         }
 
@@ -170,13 +171,18 @@ class DiscoverFragment : Fragment() {
         } else {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
-                    actualLocation = LatLng(location?.latitude!!, location.longitude)
-                    googleMap!!.addMarker(
-                        MarkerOptions()
-                            .position(actualLocation)
-                            .title("Eu")
-                    ).showInfoWindow()
-                    googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
+                    if (location != null) {
+                        actualLocation = LatLng(location?.latitude!!, location.longitude)
+                        googleMap!!.clear()
+                        googleMap!!.addMarker(
+                            MarkerOptions()
+                                .position(actualLocation)
+                                .title("Eu")
+                        ).showInfoWindow()
+                        googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
+                    } else {
+                        mapFragment.getMapAsync(callback)
+                    }
                 }
         }
     }
