@@ -29,6 +29,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.api.LogDescriptor
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.cmu_exerciseyourself.databinding.ActivityMainBinding
@@ -40,10 +41,7 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.services.BackgroundTrackActivity
 import pt.ipp.estg.cmu_exerciseyourself.ui.authentication.AuthenticationActivity
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
-import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
-import pt.ipp.estg.cmu_exerciseyourself.utils.Status
-import pt.ipp.estg.cmu_exerciseyourself.utils.hasPermission
-import pt.ipp.estg.cmu_exerciseyourself.utils.requestPermissionWithRationale
+import pt.ipp.estg.cmu_exerciseyourself.utils.*
 import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
@@ -167,27 +165,42 @@ class MainActivity : AppCompatActivity(),IServiceController {
                 grantResults[0] == PackageManager.PERMISSION_GRANTED ->
                     startService(Intent(this,BackgroundTrackActivity::class.java))
                 else -> {
-                    Snackbar.make(
-                        binding.container,
-                        "Fine location permission was denied but is needed for core functionality.",
-                        Snackbar.LENGTH_LONG)
-                        .setAction("Definições") {
-                            // Build intent that displays the App settings screen.
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            val uri = Uri.fromParts(
-                                "package",
-                                BuildConfig.APPLICATION_ID,
-                                null
-                            )
-                            intent.data = uri
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                        }
-                        .show()
+                    handleAccessDenied()
+                }
+            }
+        }else if(requestCode == PERMISSION_REQUEST_CODE){
+            Log.d("asd", "onRequestPermissionsResult: location entrou !!")
+            when {
+                grantResults.isEmpty() ->
+                    Log.d("asd", "User interaction was cancelled.")
+                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
+                    Log.d("asd", "onRequestPermissionsResult: location access !!")
+                else -> {
+                    handleAccessDenied()
                 }
             }
         }
+    }
+
+    private fun handleAccessDenied(){
+        Snackbar.make(
+            binding.container,
+            "Acesso à localização foi negada.Algumas funcionalidades serão desativadas.",
+            Snackbar.LENGTH_LONG)
+            .setAction("Definições") {
+                // Build intent that displays the App settings screen.
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                val uri = Uri.fromParts(
+                    "package",
+                    BuildConfig.APPLICATION_ID,
+                    null
+                )
+                intent.data = uri
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+            .show()
     }
 
     fun locationRequestAccepted():Boolean {

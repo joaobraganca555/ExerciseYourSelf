@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 
+const val PERMISSION_REQUEST_CODE = 555
 
 enum class Sport{
     RUNNING_OUTDOOR,
