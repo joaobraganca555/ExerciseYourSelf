@@ -25,6 +25,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.cmu_exerciseyourself.databinding.ActivityMainBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
@@ -32,6 +34,7 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.services.BackgroundTrackActivity
+import pt.ipp.estg.cmu_exerciseyourself.ui.authentication.AuthenticationActivity
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
     var locationService: BackgroundTrackActivity? = null
     lateinit var navController:NavController
     var workoutsViewModel:WorkoutsViewModel? = null
+    private val REQUEST_AUTHENTICATION = 666
 
     val broadcastReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -262,8 +266,9 @@ class MainActivity : AppCompatActivity(),IServiceController {
                 return true
             }
             R.id.navigation_logout -> {
-                Log.d("asd", "onOptionsItemSelected: logout")
-                return true
+                Firebase.auth.signOut()
+                val intent = Intent(this, AuthenticationActivity::class.java)
+                startActivityForResult(intent, REQUEST_AUTHENTICATION)
             }
         }
         return super.onOptionsItemSelected(item)
