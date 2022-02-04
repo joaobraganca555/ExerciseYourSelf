@@ -31,7 +31,6 @@ import java.util.*
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 
-
 class ManualExercise : Fragment() {
     private lateinit var binding: FragmentManualExerciseBinding
     var totalWorkouts:List<Workouts>? = null

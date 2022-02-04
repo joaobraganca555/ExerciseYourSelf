@@ -1,10 +1,12 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.exercise
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +17,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -57,11 +61,11 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private var sensorManager: SensorManager? = null
 
     private var timer = object : Timer() {}
-    private lateinit var timerTask:TimerTask
+    private lateinit var timerTask: TimerTask
     var time: Double = 0.0
 
-    private lateinit var beginDate : LocalDateTime
-    lateinit var endDate : LocalDateTime
+    private lateinit var beginDate: LocalDateTime
+    lateinit var endDate: LocalDateTime
 
     var distance = 0.0
     private var caloriesBurned = 0
@@ -70,7 +74,7 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private var currentSteps = 0
     private var done = false
 
-    private lateinit var repository:FitnessRepository
+    private lateinit var repository: FitnessRepository
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -83,10 +87,10 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         workoutViewModel = ViewModelProvider(requireActivity()).get(WorkoutsViewModel::class.java)
 
         val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        if(stepSensor == null){
+        if (stepSensor == null) {
             Log.d("asd", "No sensor detected on this device.")
-        }else{
-            sensorManager?.registerListener(this,stepSensor, SensorManager.SENSOR_DELAY_UI)
+        } else {
+            sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
         }
     }
 
@@ -101,10 +105,14 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val root: View = binding.root
 
         repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
-            if(it == null){
+            if (it == null) {
                 weight = 70.0
-                Toast.makeText(context, "Nenhuma medição encontrada, porfavor adicionar uma", Toast.LENGTH_SHORT).show()
-            }else{
+                Toast.makeText(
+                    context,
+                    "Nenhuma medição encontrada, porfavor adicionar uma",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
                 weight = it.weight
 
             }
@@ -179,7 +187,7 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         }
     }
 
-    private fun getCalories():String {
+    private fun getCalories(): String {
         caloriesBurned = (weight * distance).toInt()
         return caloriesBurned.toString()
     }
@@ -239,12 +247,16 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if(!done){
+        if (!done) {
             currentSteps = event!!.values[0].toInt()
             done = true
         }
         currentSteps += event!!.values[0].toInt()
-        Toast.makeText(myContext as Context, "Current steps: ".plus(currentSteps.toString()), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            myContext as Context,
+            "Current steps: ".plus(currentSteps.toString()),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 }

@@ -1,45 +1,32 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.measurements
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentMeasurementsBinding
-import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
-import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Measurements
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-import kotlin.properties.Delegates
 
 class MeasurementsFragment : Fragment() {
 
     private var _binding: FragmentMeasurementsBinding? = null
     private val binding get() = _binding!!
 
-    var height by Delegates.notNull<Double>()
-    var weight by Delegates.notNull<Double>()
-    var belly by Delegates.notNull<Double>()
-    var chest by Delegates.notNull<Double>()
-    var fat by Delegates.notNull<Double>()
-    lateinit var saveBtn : Button
-    lateinit var myContext: IServiceController
+    lateinit var addMeasurementBtn: Button
+
     lateinit var repository : FitnessRepository
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        myContext = context as IServiceController
-    }
+    private lateinit var navController: NavController
+
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -52,42 +39,12 @@ class MeasurementsFragment : Fragment() {
 
         repository = FitnessRepository(requireActivity().application)
 
-        saveBtn = binding.saveBtn
+        navController = findNavController(this)
 
-        repository.getCurrentMeasurement().observe(viewLifecycleOwner, Observer {
-            if(it == null){
-                binding.height.setText("0")
-                binding.weight.setText("0")
-                binding.belly.setText("0")
-                binding.chest.setText("0")
-                binding.fat.setText("0")
-            }else{
-                binding.height.setText(it?.height.toString())
-                binding.weight.setText(it?.weight.toString())
-                binding.belly.setText(it?.belly.toString())
-                binding.chest.setText(it?.chest.toString())
-                binding.fat.setText(it?.percFat.toString())
-            }
-        })
+        addMeasurementBtn = binding.addMeasure
 
-        saveBtn.setOnClickListener {
-            try {
-                height = binding.height.text.toString().toDouble()
-                weight = binding.weight.text.toString().toDouble()
-                belly = binding.belly.text.toString().toDouble()
-                chest = binding.chest.text.toString().toDouble()
-                fat = binding.fat.text.toString().toDouble()
-
-                val date = LocalDateTime.now().toString()
-
-                var newMeasurement = Measurements(null, height, weight, belly, chest, fat, date)
-
-                Executors.newFixedThreadPool(1).execute{
-                    repository.insertMeasurement(newMeasurement)
-                }
-            }catch (e:NumberFormatException){
-                Toast.makeText(context, "Campos inválidos", Toast.LENGTH_SHORT).show()
-            }
+        addMeasurementBtn.setOnClickListener {
+            navController.navigate(R.id.navigation_addMeasurement)
         }
 
         return root
