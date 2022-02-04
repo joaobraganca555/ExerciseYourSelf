@@ -110,14 +110,12 @@ class MainActivity : AppCompatActivity(),IServiceController {
             Log.d("asd", "planned=" + it.toString())
         })
 
-        toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
         navView.menu.getItem(2).isEnabled = false
         navController = findNavController(R.id.nav_host_fragment_activity_main)
-
-
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
