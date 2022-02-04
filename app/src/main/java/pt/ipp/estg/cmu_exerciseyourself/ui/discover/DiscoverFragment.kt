@@ -170,7 +170,6 @@ class DiscoverFragment : Fragment() {
         } else {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
-                    Log.d("asd", location.toString())
                     actualLocation = LatLng(location?.latitude!!, location.longitude)
                     googleMap!!.addMarker(
                         MarkerOptions()

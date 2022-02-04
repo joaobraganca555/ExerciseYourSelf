@@ -11,11 +11,15 @@ import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -50,6 +54,8 @@ class MainActivity : AppCompatActivity(),IServiceController {
     lateinit var navController:NavController
     var workoutsViewModel:WorkoutsViewModel? = null
     private val REQUEST_AUTHENTICATION = 666
+    lateinit var toolbar:Toolbar
+    var menu:Menu? = null
 
     val broadcastReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -106,12 +112,13 @@ class MainActivity : AppCompatActivity(),IServiceController {
             Log.d("asd", "planned=" + it.toString())
         })
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
         navView.menu.getItem(2).isEnabled = false
         navController = findNavController(R.id.nav_host_fragment_activity_main)
+
 
 
         // Passing each menu ID as a set of Ids because each
@@ -221,6 +228,10 @@ class MainActivity : AppCompatActivity(),IServiceController {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadInfo(){
+        Executors.newFixedThreadPool(1).execute {
+            fitnessRepository.deleteAllWorkouts()
+            fitnessRepository.deleteAllCoord()
+        }
         /*
         Executors.newFixedThreadPool(1).execute {
             fitnessRepository.deleteAllWorkouts()
@@ -257,6 +268,19 @@ class MainActivity : AppCompatActivity(),IServiceController {
         val inflater = menuInflater
         inflater.inflate(R.menu.toolbar_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun openAddActivity(){
+        navController.navigate(R.id.navigation_addManual_Exercise)
+    }
+
+    override fun openExerciseView() {
+        navController.navigate(R.id.navigation_exercise)
+        Toast.makeText(baseContext,"Treino Registado com sucesso",Toast.LENGTH_LONG).show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
