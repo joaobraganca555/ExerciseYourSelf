@@ -1,22 +1,26 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.discover
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
-import android.os.Binder
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
-import com.google.android.gms.dynamic.IObjectWrapper
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.textfield.TextInputEditText
@@ -25,7 +29,6 @@ import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.GeopifyResponseObject
 import pt.ipp.estg.trashtalkerapp.retrofitService.IGeopify
 import retrofit2.Call
 import retrofit2.Response
-import java.util.concurrent.Executors
 
 class DiscoverFragment : Fragment() {
     private lateinit var myContext : Context
@@ -35,15 +38,11 @@ class DiscoverFragment : Fragment() {
     private lateinit var radiusText : TextInputEditText
     private lateinit var geopifyGeopifyResponseObject: GeopifyResponseObject
     private var googleMap: GoogleMap? = null
-    private val felgueiras = LatLng(41.36735, -8.20094)
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var actualLocation: LatLng
+    private val PERMISSION_REQUEST_CODE = 555
 
     private val callback = OnMapReadyCallback { googleMap ->
-        googleMap.addMarker(
-            MarkerOptions()
-                .position(felgueiras)
-                .title("Eu")
-        ).showInfoWindow()
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(felgueiras,10f))
         this.googleMap = googleMap
     }
 
@@ -63,8 +62,11 @@ class DiscoverFragment : Fragment() {
         findButton = view.findViewById(R.id.findButton)
         radiusText = view.findViewById(R.id.radiusText)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
+        getLastKnownLocation()
+
         findMySelfButton.setOnClickListener {
-            this.googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(felgueiras,10f))
+            this.googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
         }
 
 
@@ -108,8 +110,37 @@ class DiscoverFragment : Fragment() {
         mapFragment.getMapAsync(callback)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                Log.d("asd", "PermissionRequest")
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    getLastKnownLocation()
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the features requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    Toast.makeText(myContext,"Impossível verificar a sua localização.\nAtive as permissões!", Toast.LENGTH_LONG)
+                }
+                return
+            }
+        }
+    }
+
     private fun loadMarkers(obj: GeopifyResponseObject) {
         val locals = obj.features
+
+        //Adicionar o ponto onde a pessoa se encontra
+        googleMap!!.addMarker(
+            MarkerOptions()
+            .position(actualLocation)
+            .title("Eu")).showInfoWindow()
+
         for (local in locals) {
             val position = LatLng(local.properties!!.lat!!, local.properties!!.lon!!)
             var info = "Fitness: "
@@ -121,6 +152,33 @@ class DiscoverFragment : Fragment() {
                     .title("Ponto de Desporto")
                     .snippet(info)
             )
+        }
+    }
+
+    private fun getLastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                myContext,
+                ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                myContext,
+                ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d("asd", "SEM PERMISSOES")
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
+            return
+        } else {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    Log.d("asd", location.toString())
+                    actualLocation = LatLng(location?.latitude!!, location.longitude)
+                    googleMap!!.addMarker(
+                        MarkerOptions()
+                            .position(actualLocation)
+                            .title("Eu")
+                    ).showInfoWindow()
+                    googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
+                }
         }
     }
 }

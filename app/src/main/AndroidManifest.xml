@@ -37,4 +37,8 @@
         </service>
     </application>
 
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
 </manifest>

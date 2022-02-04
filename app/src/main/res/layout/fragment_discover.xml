@@ -6,11 +6,21 @@
     android:layout_height="match_parent"
     android:id="@+id/parent">
 
+    <TextView
+        android:id="@+id/tittle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="20dp"
+        android:text="Procurar Zonas de Desporto" />
+
     <LinearLayout
         android:id="@+id/input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
+        android:layout_below="@id/tittle"
         android:layout_marginTop="15dp"
         tools:ignore="NotSibling">
 
@@ -30,7 +40,7 @@
             android:layout_width="170dp"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:hint="@string/raios_metros">
+            android:hint="@string/raio_metros">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/radiusText"
@@ -46,13 +56,13 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
+        android:layout_above="@+id/spacer"
         android:layout_below="@id/input"
-        android:layout_centerInParent="true"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="13dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginBottom="15dp" />
+        android:layout_marginBottom="6dp" />
 
     <ImageButton
         android:id="@+id/findMySelfButton"
@@ -63,8 +73,17 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="30dp"
         app:srcCompat="@android:drawable/ic_menu_mylocation"
         tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/spacer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp" />
 
 </RelativeLayout>
