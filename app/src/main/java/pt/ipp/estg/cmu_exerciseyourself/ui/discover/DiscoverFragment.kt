@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.GeopifyResponseObject
+import pt.ipp.estg.cmu_exerciseyourself.utils.LocationHelper
+import pt.ipp.estg.cmu_exerciseyourself.utils.MyLocationListener
 import pt.ipp.estg.cmu_exerciseyourself.utils.PERMISSION_REQUEST_CODE
 import pt.ipp.estg.trashtalkerapp.retrofitService.IGeopify
 import retrofit2.Call
@@ -41,6 +43,10 @@ class DiscoverFragment : Fragment() {
     private var googleMap: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var actualLocation: LatLng
+    private var locationHelper = LocationHelper()
+    var currentLat:Double? = null
+    var currentLong:Double? = null
+    var isUpdatingLocation:Boolean = true
 
     private val callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
@@ -65,8 +71,9 @@ class DiscoverFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
 
         findMySelfButton.setOnClickListener {
-            getLastKnownLocation()
-            this.googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
+            if(!isUpdatingLocation){
+                getLastKnownLocation()
+            }
         }
 
         findButton.setOnClickListener {
@@ -74,6 +81,7 @@ class DiscoverFragment : Fragment() {
             if (radius.isNullOrEmpty()) {
                 Toast.makeText(myContext,"Por favor preencha o raio!", Toast.LENGTH_LONG).show()
             } else if (radius.toInt() in 1..20000) {
+                locationHelper.stopUpdates()
                 googleMap!!.clear()
                 var filter = "circle:-8.20094,41.36735,"
                 val bias = "proximity:-8.20094,41.36735"
@@ -135,6 +143,7 @@ class DiscoverFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         mapFragment.getMapAsync(callback)
+        isUpdatingLocation = true
         getLastKnownLocation()
     }
 
@@ -152,10 +161,32 @@ class DiscoverFragment : Fragment() {
             mapFragment.getMapAsync(callback)
             return
         } else {
-            fusedLocationClient.lastLocation
+           locationHelper.startListeningUserLocation(
+            myContext, object : MyLocationListener {
+                override fun onLocationChanged(location: Location?) {
+                    var mLocation = location
+                    currentLat = mLocation?.latitude
+                    currentLong = mLocation?.longitude
+
+                    if(currentLat != null && currentLong!=null){
+                        actualLocation = LatLng(location?.latitude!!, location.longitude)
+                        googleMap!!.clear()
+                        googleMap!!.addMarker(
+                            MarkerOptions()
+                                .position(actualLocation)
+                                .title("Eu")
+                        ).showInfoWindow()
+                        googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
+                    }
+
+                }
+            })
+
+                 /*
+                     fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
-                        Log.d("asd", "getLastKnownLocation== ${location.toString()} ")
+                        Log.d("asd", "getLastKnownLocation== ${location} ")
                         actualLocation = LatLng(location?.latitude!!, location.longitude)
                         googleMap!!.clear()
                         googleMap!!.addMarker(
@@ -166,6 +197,26 @@ class DiscoverFragment : Fragment() {
                         googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
                     }
                 }
+                  */
+
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        locationHelper.stopUpdates()
+        isUpdatingLocation = false
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationHelper.stopUpdates()
+        isUpdatingLocation = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        locationHelper.stopUpdates()
+        isUpdatingLocation = false
     }
 }
