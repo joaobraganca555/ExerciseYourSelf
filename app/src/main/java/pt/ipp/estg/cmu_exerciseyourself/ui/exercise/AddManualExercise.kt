@@ -134,6 +134,5 @@ class AddManualExercise : Fragment() {
             }
             (myContext as IServiceController).openExerciseView()
         }
-
     }
 }

@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.GeopifyResponseObject
+import pt.ipp.estg.cmu_exerciseyourself.utils.PERMISSION_REQUEST_CODE
 import pt.ipp.estg.trashtalkerapp.retrofitService.IGeopify
 import retrofit2.Call
 import retrofit2.Response
@@ -40,7 +41,6 @@ class DiscoverFragment : Fragment() {
     private var googleMap: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var actualLocation: LatLng
-    private val PERMISSION_REQUEST_CODE = 555
 
     private val callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
@@ -63,13 +63,11 @@ class DiscoverFragment : Fragment() {
         radiusText = view.findViewById(R.id.radiusText)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
-        getLastKnownLocation()
 
         findMySelfButton.setOnClickListener {
             getLastKnownLocation()
             this.googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
         }
-
 
         findButton.setOnClickListener {
             val radius = radiusText.text.toString()
@@ -111,28 +109,6 @@ class DiscoverFragment : Fragment() {
         mapFragment.getMapAsync(callback)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSION_REQUEST_CODE -> {
-                Log.d("asd", "PermissionRequest")
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    getLastKnownLocation()
-                } else {
-                    // Explain to the user that the feature is unavailable because
-                    // the features requires a permission that the user has denied.
-                    // At the same time, respect the user's decision. Don't link to
-                    // system settings in an effort to convince the user to change
-                    // their decision.
-                    Toast.makeText(myContext,"Impossível verificar a sua localização.\nAtive as permissões!", Toast.LENGTH_LONG)
-                }
-                return
-            }
-        }
-    }
-
     private fun loadMarkers(obj: GeopifyResponseObject) {
         val locals = obj.features
 
@@ -156,6 +132,12 @@ class DiscoverFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        mapFragment.getMapAsync(callback)
+        getLastKnownLocation()
+    }
+
     private fun getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(
                 myContext,
@@ -167,11 +149,13 @@ class DiscoverFragment : Fragment() {
         ) {
             Log.d("asd", "SEM PERMISSOES")
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
+            mapFragment.getMapAsync(callback)
             return
         } else {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
+                        Log.d("asd", "getLastKnownLocation== ${location.toString()} ")
                         actualLocation = LatLng(location?.latitude!!, location.longitude)
                         googleMap!!.clear()
                         googleMap!!.addMarker(
@@ -180,8 +164,6 @@ class DiscoverFragment : Fragment() {
                                 .title("Eu")
                         ).showInfoWindow()
                         googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
-                    } else {
-                        mapFragment.getMapAsync(callback)
                     }
                 }
         }
