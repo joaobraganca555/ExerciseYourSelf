@@ -140,7 +140,6 @@ class HealthFragment : Fragment(),SensorEventListener {
         editor.apply()
     }
 
-
     private fun resetSteps(){
         binding.txtFootSteps.setOnClickListener {
             previousSteps = totalSteps

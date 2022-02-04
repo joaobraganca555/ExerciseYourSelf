@@ -1,5 +1,6 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.measurements
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentMeasurementsBinding
+import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Measurements
 import java.time.LocalDateTime
@@ -31,8 +33,13 @@ class MeasurementsFragment : Fragment() {
     var chest by Delegates.notNull<Double>()
     var fat by Delegates.notNull<Double>()
     lateinit var saveBtn : Button
-
+    lateinit var myContext: IServiceController
     lateinit var repository : FitnessRepository
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        myContext = context as IServiceController
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(

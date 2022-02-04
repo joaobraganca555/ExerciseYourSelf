@@ -16,5 +16,5 @@
 
 
     <string name="password_min_6_characters">Minímo 6 caracteres</string>
-    <string name="raios_metros">Raios (metros)</string>
+    <string name="raio_metros">Raio (metros)</string>
 </resources>
