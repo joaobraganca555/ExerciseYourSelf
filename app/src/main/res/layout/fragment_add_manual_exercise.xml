@@ -84,17 +84,20 @@
                 android:id="@+id/txtNumFootsteps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
         </com.google.android.material.textfield.TextInputLayout>
+
+        <CheckBox android:id="@+id/checkbox_schedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agendar"
+            android:layout_margin="10dp"
+            android:onClick="onCheckboxClicked"/>
 
         <Button
             android:id="@+id/saveBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="Guardar" />
-
+            android:text="Guardar"/>
     </LinearLayout>
-
-
 </ScrollView>

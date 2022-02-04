@@ -10,10 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
@@ -38,6 +35,8 @@ class AddManualExercise : Fragment() {
     lateinit var txtCal:TextInputEditText
     lateinit var txtFootSteps:TextInputEditText
     lateinit var myContext: Context
+    lateinit var checkBoxSchedule: CheckBox
+    var activityAction:String = "Registar_Treino"
     var beginDateActivity:LocalDateTime? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +62,15 @@ class AddManualExercise : Fragment() {
         txtDistance = view.findViewById(R.id.txtDistance)
         txtCal = view.findViewById(R.id.txtCal)
         txtFootSteps = view.findViewById(R.id.txtNumFootsteps)
+        checkBoxSchedule = view.findViewById(R.id.checkbox_schedule)
+
+        checkBoxSchedule.setOnClickListener {
+            if(this.activityAction.equals("Agendar_Treino")){
+                this.activityAction = "Registar_Treino"
+            }else{
+                this.activityAction = "Agendar_Treino"
+            }
+        }
 
         var myCalendar = Calendar.getInstance();
 
@@ -103,17 +111,19 @@ class AddManualExercise : Fragment() {
         val footSteps:Int
         val beginDateTime:String
         val calories:Int
+        val status:String
 
         if(txtDistance.text.toString().isEmpty()) distance = 0.0 else distance = txtDistance.text.toString().toDouble()
         if(txtFootSteps.text.toString().isEmpty()) footSteps = 0 else footSteps = txtDistance.text.toString().toInt()
         if(txtCal.text.toString().isEmpty()) calories = 0 else calories = txtCal.text.toString().toInt()
+        if(this.activityAction.equals("Registar_Treino")) status=Status.SUCCESSFULLY.toString() else status = Status.PLANNED.toString()
         if(beginDateActivity == null){
                 Toast.makeText(myContext,"Data de Inicio deve ser definida",Toast.LENGTH_LONG).show()
                 return
         }else{
             Executors.newFixedThreadPool(1).execute {
                 val workout = Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = "",
-                    status = Status.SUCCESSFULLY.toString(), distance = distance ,
+                    status = status, distance = distance ,
                     local = "", footsteps = footSteps,
                     beginDate = beginDateActivity.toString(),
                     finishedDate =  beginDateActivity.toString(), workoutId = null,

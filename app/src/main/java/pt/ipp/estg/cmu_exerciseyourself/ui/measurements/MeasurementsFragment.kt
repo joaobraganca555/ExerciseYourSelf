@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -19,7 +20,7 @@ class MeasurementsFragment : Fragment() {
     private var _binding: FragmentMeasurementsBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var addMeasurementBtn: Button
+    lateinit var addMeasurementBtn: ImageView
 
     lateinit var repository : FitnessRepository
 
