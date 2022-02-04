@@ -26,9 +26,9 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     // [END declare_auth]
     private lateinit var db: FirebaseFirestore
     private val REQUEST_MAIN_MENU = 1
-    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("asd","Authentication Activity as been CREATED")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.authentication_activity)
 
@@ -48,13 +48,40 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
             .commit()
     }
 
+
     public override fun onStart() {
+        Log.d("AuthenticationActivity","Authentication Activity just STARTED")
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser != null) {
             reload();
         }
+    }
+
+    override fun onRestart() {
+        Log.d("AuthenticationActivity","Authentication Activity RESTARTED")
+        super.onRestart()
+    }
+
+    override fun onResume() {
+        Log.d("AuthenticationActivity","Authentication Activity RESUMED")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Log.d("AuthenticationActivity","Authentication Activity is on PAUSE")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.d("AuthenticationActivity","Authentication Activity just STOPPED")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.d("AuthenticationActivity","Authentication Activity as been DESTROYED")
+        super.onDestroy()
     }
 
     private fun sendEmailVerification() {
@@ -114,6 +141,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         */
         var intent = Intent(this, MainActivity::class.java)
         startActivityForResult(intent, REQUEST_MAIN_MENU)
+        finish()
     }
 
     override fun startRegisterFragment() {
