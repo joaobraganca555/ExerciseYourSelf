@@ -39,4 +39,14 @@
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ManualExercise"
         android:label="@string/title_add_manual_training"
         tools:layout="@layout/fragment_settings"/>
+    <fragment
+        android:id="@+id/navigation_addMeasurement"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.measurements.AddMeasurement"
+        android:label="Registar Medições"
+        tools:layout="@layout/fragment_add_measurement"/>
+    <fragment
+        android:id="@+id/navigation_addManual_Exercise"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.AddManualExercise"
+        android:label="Registar Atividade"
+        tools:layout="@layout/fragment_add_manual_exercise"/>
 </navigation>

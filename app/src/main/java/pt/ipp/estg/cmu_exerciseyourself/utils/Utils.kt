@@ -17,6 +17,11 @@ enum class Sport{
     OTHER
 }
 
+enum class ViewMode{
+    ADD_MEASUREMENT_VIEW,
+    ADD_ACTIVITY_VIEW
+}
+
 enum class Status{
     PLANNED,
     SUCCESSFULLY,

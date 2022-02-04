@@ -6,6 +6,11 @@
         android:title="Minhas Medições"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/navigation_add"
+        android:title=""
+        android:icon="@drawable/ic_baseline_add"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/navigation_settings"
         android:title="Definições"
         app:showAsAction="never"/>
