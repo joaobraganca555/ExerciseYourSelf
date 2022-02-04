@@ -120,7 +120,14 @@ class AddManualExercise : Fragment() {
         if(beginDateActivity == null){
                 Toast.makeText(myContext,"Data de Inicio deve ser definida",Toast.LENGTH_LONG).show()
                 return
-        }else{
+        }else if(beginDateActivity!!.isAfter(LocalDateTime.now())
+            && activityAction.equals("Registar_Treino")){
+                Toast.makeText(myContext,"A data deve ser anterior à data atual",Toast.LENGTH_LONG).show()
+        }else if(beginDateActivity!!.isBefore(LocalDateTime.now())
+            && activityAction.equals("Agendar_Treino")){
+            Toast.makeText(myContext,"A data deve ser posterior à data atual",Toast.LENGTH_LONG).show()
+        }else
+        {
             Executors.newFixedThreadPool(1).execute {
                 val workout = Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = "",
                     status = status, distance = distance ,

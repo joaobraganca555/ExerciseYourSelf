@@ -241,11 +241,13 @@ class MainActivity : AppCompatActivity(),IServiceController {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadInfo(){
-        Executors.newFixedThreadPool(1).execute {
+
+        /*
+                Executors.newFixedThreadPool(1).execute {
             fitnessRepository.deleteAllWorkouts()
             fitnessRepository.deleteAllCoord()
         }
-        /*
+
         Executors.newFixedThreadPool(1).execute {
             fitnessRepository.deleteAllWorkouts()
             fitnessRepository.deleteAllCoord()

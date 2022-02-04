@@ -8,10 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -21,26 +19,24 @@ import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentHealthBinding
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentManualExerciseBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
-import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
-import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
-import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import java.lang.ClassCastException
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 
 class ManualExercise : Fragment() {
     private lateinit var binding: FragmentManualExerciseBinding
     var totalWorkouts:List<Workouts>? = null
-    var barChart:BarChart? = null
+    var barChartDistance:BarChart? = null
+    var barChartCalories:BarChart? = null
     var entryList:ArrayList<BarEntry>? = null
+    var entryListCalories:ArrayList<BarEntry>? = null
     var labelsNames:ArrayList<String>? = ArrayList(
         Arrays.asList("Jan","Fev","Mar","Abr","Mai","Jun","Jul","Aug","Set","Out","Nov","Dez"))
     lateinit var repository: FitnessRepository
@@ -74,12 +70,17 @@ class ManualExercise : Fragment() {
 
         repository = FitnessRepository(requireActivity().application)
 
-        barChart = root.findViewById(R.id.barChartDistance)
-        setupChart()
+        barChartDistance = root.findViewById(R.id.barChartDistance)
+        barChartCalories = root.findViewById(R.id.barChartCalories)
+
+        setupChartDistance()
+        setupChartCalories()
 
         repository.getAllWorkouts().observe(viewLifecycleOwner,{
             totalWorkouts = it
             entryList = ArrayList()
+            entryListCalories = ArrayList()
+            getCaloriesLastDays()
 
             //Calculate each month
             for (i in 1..12){
@@ -92,19 +93,15 @@ class ManualExercise : Fragment() {
             val barDataSet = BarDataSet(entryList, "")
             barDataSet.setColors(*ColorTemplate.LIBERTY_COLORS)
             val data = BarData(barDataSet)
-            barChart?.data = data
-        })
-
-        repository.getAllPlannedWorkouts().observe(viewLifecycleOwner,{
-            var res = it
+            barChartDistance?.data = data
         })
 
         // Inflate the layout for this fragment
         return root
     }
 
-    fun setupChart(){
-        barChart?.let{
+    fun setupChartDistance(){
+        barChartDistance?.let{
             val xAxis: XAxis = it.getXAxis()
             xAxis.setCenterAxisLabels(true)
             xAxis.setDrawGridLines(false)
@@ -127,13 +124,57 @@ class ManualExercise : Fragment() {
         }
     }
 
+    fun setupChartCalories(){
+        barChartCalories?.let{
+            val xAxis: XAxis = it.getXAxis()
+            xAxis.setCenterAxisLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f;
+            xAxis.setLabelCount(7)
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+            xAxis.setGranularity(1f)
+            xAxis.setAvoidFirstLastClipping(true)
+            it.xAxis.isEnabled = false
+            it.axisLeft.setDrawLabels(false)
+            it.axisLeft.setDrawGridLines(false)
+            it.xAxis.setDrawAxisLine(false)
+
+            it.axisRight.isEnabled = false
+            it.legend.isEnabled = false
+            it.description.isEnabled = false
+            it.animateY(2000)
+            it.invalidate()
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getTotalDistanceByMonth(month:Int):Float?{
         var workoutsByMonth = totalWorkouts?.filter {
             LocalDateTime.parse(it.beginDate).month == Month.of(month)
+                    && !it.status.equals(Status.PLANNED.toString())
         }
 
         var totalDistance = workoutsByMonth?.map { it.distance }?.sum()
         return totalDistance?.toFloat()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCaloriesLastDays(){
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (i in 1..6){
+            var totalCalories = 0
+            var targetDay = LocalDateTime.now().minusDays(i.toLong())
+            var workoutsByDay = totalWorkouts?.filter {
+                LocalDateTime.parse(it.beginDate).format(formatter).equals(targetDay.format(formatter))
+            }
+
+            totalCalories = workoutsByDay?.map { it.calories }?.sum() ?: 0
+            entryListCalories?.add(BarEntry(i.toFloat(), totalCalories.toFloat()))
+        }
+
+        val barDataSetCalories = BarDataSet(entryListCalories, "")
+        barDataSetCalories.setColors(*ColorTemplate.LIBERTY_COLORS)
+        val data = BarData(barDataSetCalories)
+        barChartCalories?.data = data
     }
 }
