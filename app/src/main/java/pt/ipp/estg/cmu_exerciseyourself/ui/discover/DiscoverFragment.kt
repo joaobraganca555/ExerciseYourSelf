@@ -2,20 +2,20 @@ package pt.ipp.estg.cmu_exerciseyourself.ui.discover
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -26,8 +26,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.GeopifyResponseObject
-import pt.ipp.estg.cmu_exerciseyourself.utils.LocationHelper
-import pt.ipp.estg.cmu_exerciseyourself.utils.MyLocationListener
 import pt.ipp.estg.cmu_exerciseyourself.utils.PERMISSION_REQUEST_CODE
 import pt.ipp.estg.trashtalkerapp.retrofitService.IGeopify
 import retrofit2.Call
@@ -35,21 +33,52 @@ import retrofit2.Response
 
 class DiscoverFragment : Fragment() {
     private lateinit var myContext : Context
-    private lateinit var findMySelfButton : ImageButton
-    private lateinit var findButton : ImageButton
+    private lateinit var refreshLocation : Button
+    private lateinit var findPlacesButton : ImageButton
     private lateinit var mapFragment : SupportMapFragment
     private lateinit var radiusText : TextInputEditText
     private lateinit var geopifyGeopifyResponseObject: GeopifyResponseObject
-    private var googleMap: GoogleMap? = null
+    private lateinit var mMap: GoogleMap
+    private lateinit var lastLocation: LatLng
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var actualLocation: LatLng
-    private var locationHelper = LocationHelper()
-    var currentLat:Double? = null
-    var currentLong:Double? = null
-    var isUpdatingLocation:Boolean = true
+    //private var locationHelper = LocationHelper()
+    //var currentLat:Double? = null
+    //var currentLong:Double? = null
+    //var isUpdatingLocation:Boolean = true
 
     private val callback = OnMapReadyCallback { googleMap ->
-        this.googleMap = googleMap
+        mMap = googleMap
+        mMap.uiSettings.isZoomControlsEnabled = true
+        mMap.uiSettings.isMapToolbarEnabled = true
+
+        if (ActivityCompat.checkSelfPermission(
+                myContext,
+                ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                myContext,
+                ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d("asd", "SEM PERMISSOES")
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
+            return@OnMapReadyCallback
+        } else {
+            setUpMap()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun setUpMap() {
+        mMap.isMyLocationEnabled = true
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener(requireActivity()) { location ->
+                if (location != null) {
+                    Log.d("asd", "getLastKnownLocation== ${location} ")
+                    lastLocation = LatLng(location.latitude, location.longitude)
+                    mMap.clear()
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation,12f))
+                }
+            }
     }
 
     override fun onAttach(context: Context) {
@@ -64,27 +93,28 @@ class DiscoverFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_discover, container, false)
 
-        findMySelfButton = view.findViewById(R.id.findMySelfButton)
-        findButton = view.findViewById(R.id.findButton)
+        refreshLocation = view.findViewById(R.id.refreshLocation)
+        findPlacesButton = view.findViewById(R.id.findButton)
         radiusText = view.findViewById(R.id.radiusText)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
 
-        findMySelfButton.setOnClickListener {
-            if(!isUpdatingLocation){
-                getLastKnownLocation()
-            }
+        refreshLocation.setOnClickListener {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
+            mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
+            mapFragment.getMapAsync(callback)
+            //setUpMap()
         }
 
-        findButton.setOnClickListener {
+        findPlacesButton.setOnClickListener {
             val radius = radiusText.text.toString()
             if (radius.isNullOrEmpty()) {
                 Toast.makeText(myContext,"Por favor preencha o raio!", Toast.LENGTH_LONG).show()
             } else if (radius.toInt() in 1..20000) {
-                locationHelper.stopUpdates()
-                googleMap!!.clear()
-                var filter = "circle:-8.20094,41.36735,"
-                val bias = "proximity:-8.20094,41.36735"
+                //locationHelper.stopUpdates()
+                mMap.clear()
+                var filter = "circle:${lastLocation.longitude},${lastLocation.latitude},"
+                val bias = "proximity:${lastLocation.longitude},${lastLocation.latitude}"
                 val retrofitClient = IGeopify.getApi()
                 filter += radius
                 val responseCallback = retrofitClient.findPlaces(filter, bias)
@@ -121,17 +151,19 @@ class DiscoverFragment : Fragment() {
         val locals = obj.features
 
         //Adicionar o ponto onde a pessoa se encontra
-        googleMap!!.addMarker(
+        /*
+        mMap.addMarker(
             MarkerOptions()
-            .position(actualLocation)
+            .position(lastLocation)
             .title("Eu")).showInfoWindow()
+         */
 
         for (local in locals) {
             val position = LatLng(local.properties!!.lat!!, local.properties!!.lon!!)
             var info = "Fitness: "
             info += "${local.properties!!.formatted}"
             Log.d("asd", "tentou adicionar marker")
-            googleMap!!.addMarker(
+            mMap.addMarker(
                 MarkerOptions()
                     .position(position)
                     .title("Ponto de Desporto")
@@ -140,13 +172,7 @@ class DiscoverFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        mapFragment.getMapAsync(callback)
-        isUpdatingLocation = true
-        getLastKnownLocation()
-    }
-
+    /*
     private fun getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(
                 myContext,
@@ -161,6 +187,21 @@ class DiscoverFragment : Fragment() {
             mapFragment.getMapAsync(callback)
             return
         } else {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        Log.d("asd", "getLastKnownLocation== ${location} ")
+                        lastLocation = LatLng(location?.latitude!!, location.longitude)
+                        mMap!!.clear()
+                        mMap!!.addMarker(
+                            MarkerOptions()
+                                .position(lastLocation)
+                                .title("Eu")
+                        ).showInfoWindow()
+                        mMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation,12f))
+                    }
+                }
+            /*
            locationHelper.startListeningUserLocation(
             myContext, object : MyLocationListener {
                 override fun onLocationChanged(location: Location?) {
@@ -180,25 +221,7 @@ class DiscoverFragment : Fragment() {
                     }
 
                 }
-            })
-
-                 /*
-                     fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        Log.d("asd", "getLastKnownLocation== ${location} ")
-                        actualLocation = LatLng(location?.latitude!!, location.longitude)
-                        googleMap!!.clear()
-                        googleMap!!.addMarker(
-                            MarkerOptions()
-                                .position(actualLocation)
-                                .title("Eu")
-                        ).showInfoWindow()
-                        googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
-                    }
-                }
-                  */
-
+            })*/
         }
     }
 
@@ -218,5 +241,5 @@ class DiscoverFragment : Fragment() {
         super.onDestroy()
         locationHelper.stopUpdates()
         isUpdatingLocation = false
-    }
+    }*/
 }

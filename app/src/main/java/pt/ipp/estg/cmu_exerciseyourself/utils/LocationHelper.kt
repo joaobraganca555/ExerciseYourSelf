@@ -27,7 +27,7 @@ class LocationHelper {
         }
 
         mLocationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
+            LocationManager.FUSED_PROVIDER,
             LOCATION_REFRESH_TIME.toLong(),
             LOCATION_REFRESH_DISTANCE.toFloat(),
             locationListener
