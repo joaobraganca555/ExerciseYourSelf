@@ -11,9 +11,10 @@ data class Workouts(
     val workoutId:Int?,
     val sport: String,
     val status: String,
-    val duration:Int,
-    val distance:Int,
+    val duration:String,
+    val distance:Double,
     val footsteps:Int,
+    val calories:Int,
     val local:String,
     val beginDate:String,
     val finishedDate:String)

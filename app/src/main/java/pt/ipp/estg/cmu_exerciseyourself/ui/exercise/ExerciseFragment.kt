@@ -1,11 +1,17 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.exercise
 
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,14 +27,20 @@ import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
+import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
+import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 import kotlin.math.roundToInt
 
-class ExerciseFragment : Fragment(), OnMapReadyCallback {
+class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private var _binding: FragmentExerciseBinding? = null
     private val binding get() = _binding!!
     private lateinit var myContext: IServiceController
@@ -36,20 +48,29 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
     lateinit var workoutViewModel: WorkoutsViewModel
     val current = LatLng(37.129665, -8.669586)
     var marker = MarkerOptions().position(LatLng(37.129665, -8.669586))
-    var listPoints = ArrayList<LatLng>()
+
+    var listCoordinates = ArrayList<Coordinates>()
+
     lateinit var polyOptions: PolylineOptions
     var googlemap: GoogleMap? = null
 
+    private var sensorManager: SensorManager? = null
 
-    var timer = object : Timer() {}
-    lateinit var timerTask: TimerTask
+    private var timer = object : Timer() {}
+    private lateinit var timerTask:TimerTask
     var time: Double = 0.0
 
-    var distance = 0.0
-    var caloriesBurned = 0
-    var weight = 0.0
+    private lateinit var beginDate : LocalDateTime
+    lateinit var endDate : LocalDateTime
 
-    lateinit var repository:FitnessRepository
+    var distance = 0.0
+    private var caloriesBurned = 0
+    private var weight = 0.0
+
+    private var currentSteps = 0
+    private var done = false
+
+    private lateinit var repository:FitnessRepository
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -60,6 +81,13 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         workoutViewModel = ViewModelProvider(requireActivity()).get(WorkoutsViewModel::class.java)
+
+        val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        if(stepSensor == null){
+            Log.d("asd", "No sensor detected on this device.")
+        }else{
+            sensorManager?.registerListener(this,stepSensor, SensorManager.SENSOR_DELAY_UI)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -73,10 +101,19 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
         val root: View = binding.root
 
         repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
-            weight = it?.weight!!
+            if(it == null){
+                weight = 70.0
+                Toast.makeText(context, "Nenhuma medição encontrada, porfavor adicionar uma", Toast.LENGTH_SHORT).show()
+            }else{
+                weight = it.weight
+
+            }
         }
 
         binding.btnStart.setOnClickListener {
+            beginDate = LocalDateTime.now()
+            //reset polyline
+            polyOptions = PolylineOptions()
             startTimer()
             myContext.startAutomaticExercise()
             binding.btnStart.isEnabled = false
@@ -84,10 +121,12 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.btnStop.setOnClickListener {
+            endDate = LocalDateTime.now()
             timerTask.cancel()
             myContext.stopAutomaticExercise()
             binding.btnStart.isEnabled = true
             binding.btnStart.isClickable = true
+            saveWorkout()
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
@@ -103,6 +142,9 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
                 )
                 polyOptions.add(it)
                 addPolyline(polyOptions)
+
+                var coord = Coordinates(it.latitude, it.longitude, null, null)
+                listCoordinates.add(coord)
             }
         }
 
@@ -113,6 +155,28 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
         }
 
         return root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun saveWorkout() {
+        Executors.newFixedThreadPool(1).execute {
+            val workout = Workouts(
+                sport = Sport.RUNNING_OUTDOOR.toString(),
+                duration = getTimerText(),
+                status = Status.SUCCESSFULLY.toString(),
+                distance = distance,
+                local = "null",
+                footsteps = currentSteps,
+                beginDate = beginDate.toString(),
+                finishedDate = endDate.toString(),
+                workoutId = null,
+                calories = caloriesBurned
+            )
+            val listCoord = listCoordinates
+
+            val workoutWithCoord = WorkoutWithCoord(workout, listCoord)
+            repository.insertWorkoutWithCoord(workoutWithCoord)
+        }
     }
 
     private fun getCalories():String {
@@ -169,4 +233,18 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback {
             animateCamera(CameraUpdateFactory.newLatLngZoom(current, 16f));
         }
     }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(!done){
+            currentSteps = event!!.values[0].toInt()
+            done = true
+        }
+        currentSteps += event!!.values[0].toInt()
+        Toast.makeText(myContext as Context, "Current steps: ".plus(currentSteps.toString()), Toast.LENGTH_SHORT).show()
+    }
+
 }

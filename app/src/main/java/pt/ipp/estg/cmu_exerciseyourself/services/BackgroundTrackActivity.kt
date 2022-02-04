@@ -23,6 +23,7 @@ import java.math.RoundingMode
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.roundToInt
 
 //Fused Location API Google Play Services
 class BackgroundTrackActivity: Service() {
@@ -32,6 +33,7 @@ class BackgroundTrackActivity: Service() {
     private var previousLong:Double? = null
     private var totalDistance:Double = 0.0
     private var totalDuration:Long = 0
+    lateinit var currentDuration:String
     private var beginDate: LocalDateTime? = null
     private lateinit var workoutViewModel:WorkoutsViewModel
 
@@ -77,6 +79,7 @@ class BackgroundTrackActivity: Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val timer = Timer()
+
         var currentLat:Double?
         var currentLong:Double?
         locationHelper.startListeningUserLocation(
@@ -100,13 +103,11 @@ class BackgroundTrackActivity: Service() {
                         val distance = BigDecimal(totalDistance).setScale(2, RoundingMode.HALF_EVEN)
                         i.putExtra("distance", distance.toDouble())
 
-                        //i.putExtra("duration", totalDuration)
-
                         sendBroadcast(i)
                     }
                     mLocation?.let {
                         Log.d("asd", "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance")
-                        Toast.makeText(baseContext, totalDistance.toString(), Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(baseContext, totalDistance.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             })

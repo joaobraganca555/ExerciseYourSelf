@@ -217,6 +217,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadInfo(){
+        /*
         Executors.newFixedThreadPool(1).execute {
             fitnessRepository.deleteAllWorkouts()
             fitnessRepository.deleteAllCoord()
@@ -244,6 +245,8 @@ class MainActivity : AppCompatActivity(),IServiceController {
             val workoutWithCoord2 = WorkoutWithCoord(workout2,listCoord2)
             fitnessRepository.insertWorkoutWithCoord(workoutWithCoord2)
         }
+
+         */
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -258,8 +261,7 @@ class MainActivity : AppCompatActivity(),IServiceController {
                 navController.navigate(R.id.navigation_measurements)
             }
             R.id.navigation_settings -> {
-                Log.d("asd", "onOptionsItemSelected: sett")
-                return true
+                navController.navigate(R.id.navigation_userProfile)
             }
             R.id.navigation_logout -> {
                 Log.d("asd", "onOptionsItemSelected: logout")
