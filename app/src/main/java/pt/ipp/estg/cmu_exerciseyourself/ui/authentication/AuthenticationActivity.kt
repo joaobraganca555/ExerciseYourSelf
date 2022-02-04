@@ -98,6 +98,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         if (user != null) {
             var intent = Intent(this, MainActivity::class.java)
             startActivityForResult(intent, REQUEST_MAIN_MENU)
+            finish()
         }
     }
 
@@ -109,7 +110,6 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     }
 
     override fun login(email: String, password: String, passwordLayout: TextInputLayout, emailLayout: TextInputLayout) {
-       /*
         if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
             // [START sign_in_with_email]
             auth.signInWithEmailAndPassword(email, password)
@@ -138,10 +138,10 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         } else {
             Toast.makeText(this,"Preencha todos os campos!", Toast.LENGTH_SHORT).show()
         }
-        */
-        var intent = Intent(this, MainActivity::class.java)
-        startActivityForResult(intent, REQUEST_MAIN_MENU)
-        finish()
+
+        //var intent = Intent(this, MainActivity::class.java)
+        //startActivityForResult(intent, REQUEST_MAIN_MENU)
+        //finish()
     }
 
     override fun startRegisterFragment() {
@@ -161,7 +161,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
                         val userLogin = auth.currentUser
-                        addUserToFireStore(user)
+                        addUserToFireStore(email, user)
                         updateUI(userLogin)
                     } else {
                         // If sign in fails, display a message to the user.
@@ -179,12 +179,12 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         }
     }
 
-    private fun addUserToFireStore(user: UserProfile) {
+    private fun addUserToFireStore(email: String, user: UserProfile) {
         // Add a new document with a generated ID
-        db.collection("users")
-            .add(user)
+        db.collection("users").document(email)
+            .set(user)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                Log.d(TAG, "DocumentSnapshot added with ID: ${email}")
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
