@@ -1,13 +1,11 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.exercise
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,8 +16,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -27,11 +23,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import kotlinx.coroutines.newFixedThreadPoolContext
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
@@ -42,12 +35,10 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
-import kotlin.concurrent.timerTask
 import kotlin.math.roundToInt
 
 class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
@@ -112,8 +103,6 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         _binding = FragmentExerciseBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.btnStop.isEnabled = false
-        binding.btnStop.isClickable = false
 
         repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
             if (it == null) {
@@ -137,9 +126,6 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
             myContext.startAutomaticExercise()
             binding.btnStart.isEnabled = false
             binding.btnStart.isClickable = false
-
-            binding.btnStop.isEnabled = true
-            binding.btnStop.isClickable = true
         }
 
         binding.btnStop.setOnClickListener {
@@ -183,7 +169,7 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
     private fun saveWorkout() {
         var workout = Workouts(
             sport = Sport.RUNNING_OUTDOOR.toString(),
-            duration = getTimerText(),
+            duration = ChronoUnit.MINUTES.between(beginDate, endDate).toInt().toString(),
             status = Status.SUCCESSFULLY.toString(),
             distance = distance,
             local = "null",
@@ -203,8 +189,6 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         }
         onAlertDialog(binding.container,workout)
     }
-
-
 
     private fun getCalories(): String {
         caloriesBurned = (weight * distance).toInt()
@@ -280,9 +264,8 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onAlertDialog(view: View, workout: Workouts) {
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-        var record = LocalDateTime.parse(workout.beginDate).format(formatter) + " " +
+        var record = workout.beginDate + " " +
                 workout.sport
 
         val builder = AlertDialog.Builder(view.context)
