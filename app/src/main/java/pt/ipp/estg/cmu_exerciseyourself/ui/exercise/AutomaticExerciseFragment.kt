@@ -60,7 +60,8 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
     private var sensorManager: SensorManager? = null
 
     private var timer = object : Timer() {}
-    private lateinit var timerTask: TimerTask
+    private var timerTask: TimerTask? = null
+
     var time: Double = 0.0
 
     private lateinit var beginDate: LocalDateTime
@@ -157,7 +158,7 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
             workoutViewModel.setOnGoingWorkout(null)
 
             endDate = LocalDateTime.now()
-            timerTask.cancel()
+            timerTask?.cancel()
             myContext.stopAutomaticExercise()
 
             saveWorkout()
@@ -193,12 +194,12 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
 
     override fun onPause() {
         super.onPause()
-        timerTask.cancel()
+        timerTask?.cancel()
     }
 
     override fun onStop() {
         super.onStop()
-        timerTask.cancel()
+        timerTask?.cancel()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
