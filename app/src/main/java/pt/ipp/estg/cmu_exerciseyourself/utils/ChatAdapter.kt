@@ -23,28 +23,31 @@ class ChatAdapter(var listWorkouts:List<WorkoutChat>): RecyclerView.Adapter<Chat
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewholder, position: Int) {
-        val formatted = listWorkouts[position].data
-        holder.txtBeginDate.text = formatted
+
+        holder.txtBeginDate.text = "Às " + LocalDateTime.parse(listWorkouts[position].data).hour.toString() +
+                ":" + LocalDateTime.parse(listWorkouts[position].data).minute.toString() +" de " +
+                LocalDateTime.parse(listWorkouts[position].data).dayOfMonth.toString() + " " +
+                LocalDateTime.parse(listWorkouts[position].data).month.toString()
         when(listWorkouts[position].sport){
             Sport.RUNNING_OUTDOOR.toString() ->{
                 holder.imgSport.setImageResource(R.drawable.ic_baseline_running)
-                holder.txtSport.text = "Corrida"
+                holder.txtSport.text = "Treino de Corrida terminado por ${listWorkouts[position].user}"
             }
             Sport.RUNNING_INDOOR.toString() ->{
                 holder.imgSport.setImageResource(R.drawable.ic_baseline_running)
-                holder.txtSport.text = "Corrida"
+                holder.txtSport.text = "Treino de Corrida terminado por ${listWorkouts[position].user}"
             }
             Sport.WALKING.toString() ->{
                 holder.imgSport.setImageResource(R.drawable.ic_baseline_walking)
-                holder.txtSport.text = "Caminhada"
+                holder.txtSport.text = " Treino de Caminhada terminado por ${listWorkouts[position].user}"
             }
             Sport.GYM.toString() ->{
                 holder.imgSport.setImageResource(R.drawable.ic_baseline_walking)
-                holder.txtSport.text = "Ginásio"
+                holder.txtSport.text = "Treino de Ginásio terminado por "
             }
             Sport.HOME_TRAINING.toString() ->{
                 holder.imgSport.setImageResource(R.drawable.ic_baseline_walking)
-                holder.txtSport.text = "Treino em Casa"
+                holder.txtSport.text = "Treino em Casa terminado por "
             }
         }
     }

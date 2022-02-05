@@ -1,5 +1,6 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.comunity
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -22,6 +23,12 @@ class ComunityFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var myAdapter:ChatAdapter
     private lateinit var workoutChatList: ArrayList<WorkoutChat>
+    private lateinit var myContext:Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        myContext = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +57,9 @@ class ComunityFragment : Fragment() {
     }
 
     fun updateMessages(){
+        val sharedPreferences = myContext.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val savedUser = sharedPreferences.getString("user","user")
+
         val docRef = db.collection("comunity").document("workouts")
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -66,7 +76,7 @@ class ComunityFragment : Fragment() {
                     var date:String = fieldsList.get(0)
                     var sport:String = fieldsList.get(1)
                     if(date!= null && sport!= null){
-                        updatedList.add(WorkoutChat(date!!,sport!!))
+                        updatedList.add(WorkoutChat(date!!,sport!!,savedUser))
                     }
                 }
                 myAdapter.updateList(updatedList.reversed())

@@ -1,5 +1,6 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.authentication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -105,6 +106,11 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
 
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
+            val sharedPreferences = baseContext.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString("user", user.email)
+            editor.apply()
+
             var intent = Intent(this, MainActivity::class.java)
             startActivityForResult(intent, REQUEST_MAIN_MENU)
             finish()
@@ -119,7 +125,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     }
 
     override fun login(email: String, password: String, passwordLayout: TextInputLayout, emailLayout: TextInputLayout) {
-     /*
+
             if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
             // [START sign_in_with_email]
             auth.signInWithEmailAndPassword(email, password)
@@ -149,12 +155,6 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
             Toast.makeText(this,"Preencha todos os campos!", Toast.LENGTH_SHORT).show()
         }
 
-      */
-
-
-        var intent = Intent(this, MainActivity::class.java)
-        startActivityForResult(intent, REQUEST_MAIN_MENU)
-        finish()
     }
 
     override fun startRegisterFragment() {

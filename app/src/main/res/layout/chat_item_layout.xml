@@ -4,32 +4,41 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center_vertical"
+    android:gravity="center_vertical|center_horizontal"
     android:layout_margin="15dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_margin="15dp">
+        android:orientation="horizontal">
         <ImageView
             android:id="@+id/imgSport"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:src="@drawable/ic_baseline_running" />
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_running"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/txtSport"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Running"
-            android:textSize="15sp"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/txtDateBegin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="25 de Dezembro"
-            android:textSize="15sp"
-            android:layout_weight="1"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:gravity="center_horizontal"
+            android:layout_margin="15dp">
+            <TextView
+                android:id="@+id/txtSport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Running"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/txtDateBegin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25 de Dezembro"
+                android:layout_marginTop="10dp"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
