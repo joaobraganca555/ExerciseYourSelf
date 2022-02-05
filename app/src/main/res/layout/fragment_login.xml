@@ -3,12 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="100dp"
+    android:paddingTop="20dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.authentication.LoginFragment"
     android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="top"
+        android:src="@mipmap/ic_banner_light_foreground"/>
 
     <LinearLayout
         android:layout_width="match_parent"
