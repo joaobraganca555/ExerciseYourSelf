@@ -268,7 +268,7 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         val savedUser = sharedPreferences.getString("user","user")
 
         var record = workout.beginDate + " " +
-                workout.sport + " " + savedUser
+                workout.sport + " " + workout.distance.toString() + " " + savedUser
 
         val builder = AlertDialog.Builder(view.context)
         builder.setTitle("Treino Terminado")

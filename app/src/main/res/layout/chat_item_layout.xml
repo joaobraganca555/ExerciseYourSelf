@@ -18,17 +18,27 @@
             android:layout_gravity="center_vertical|center_horizontal"
             android:src="@drawable/ic_baseline_running" />
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:gravity="center_horizontal"
+            android:layout_gravity="left|center_vertical"
+            android:gravity="left"
             android:layout_margin="15dp">
             <TextView
                 android:id="@+id/txtSport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Running"
+                android:textColor="@color/black"
+                android:gravity="left"
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/txtDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Running"
+                android:gravity="left"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
             <TextView

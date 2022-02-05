@@ -28,6 +28,7 @@ class ChatAdapter(var listWorkouts:List<WorkoutChat>): RecyclerView.Adapter<Chat
                 ":" + LocalDateTime.parse(listWorkouts[position].data).minute.toString() +" de " +
                 LocalDateTime.parse(listWorkouts[position].data).dayOfMonth.toString() + " " +
                 LocalDateTime.parse(listWorkouts[position].data).month.toString()
+        holder.txtDistance.text = "Distância percorrida de ${listWorkouts[position].distance} Km."
         when(listWorkouts[position].sport){
             Sport.RUNNING_OUTDOOR.toString() ->{
                 holder.imgSport.setImageResource(R.drawable.ic_baseline_running)
@@ -63,11 +64,13 @@ class ChatAdapter(var listWorkouts:List<WorkoutChat>): RecyclerView.Adapter<Chat
         var txtSport: TextView
         var imgSport: ImageView
         var txtBeginDate: TextView
+        var txtDistance:TextView
 
         init{
             txtSport = itemView.findViewById(R.id.txtSport)
             imgSport = itemView.findViewById(R.id.imgSport)
             txtBeginDate = itemView.findViewById(R.id.txtDateBegin)
+            txtDistance = itemView.findViewById(R.id.txtDistance)
         }
     }
 }

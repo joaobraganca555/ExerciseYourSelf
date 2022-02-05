@@ -13,8 +13,6 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="620dp"/>
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="550dp"

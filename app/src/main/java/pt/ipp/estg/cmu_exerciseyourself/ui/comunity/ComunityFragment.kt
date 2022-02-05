@@ -72,9 +72,10 @@ class ComunityFragment : Fragment() {
                     var fieldsList = item.split(" ")
                     var date:String = fieldsList.get(0)
                     var sport:String = fieldsList.get(1)
-                    var savedUser:String = fieldsList.get(2)
+                    val distance = fieldsList.get(2)
+                    var savedUser:String = fieldsList.get(3)
                     if(date!= null && sport!= null){
-                        updatedList.add(WorkoutChat(date!!,sport!!,savedUser))
+                        updatedList.add(WorkoutChat(date!!,sport!!,distance,savedUser))
                     }
                 }
                 myAdapter.updateList(updatedList.reversed())
