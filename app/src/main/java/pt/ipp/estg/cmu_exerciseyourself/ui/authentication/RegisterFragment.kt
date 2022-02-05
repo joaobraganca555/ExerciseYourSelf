@@ -9,15 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IAuthentication
 import pt.ipp.estg.cmu_exerciseyourself.model.models.UserProfile
+import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
 import java.lang.ClassCastException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.log
 
 class RegisterFragment : Fragment() {
     lateinit var registerButton : Button
@@ -45,7 +45,6 @@ class RegisterFragment : Fragment() {
             Log.d("LoginFragment", e.toString())
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,10 +82,11 @@ class RegisterFragment : Fragment() {
 
 
         registerButton.setOnClickListener {
+            val weight = weightText.text.toString()
+            val height = heightText.text.toString()
             var newUser = UserProfile(nameText.text.toString(), birthDateText.text.toString() , mailText.text.toString())
-            parentActivity.register(mailText.text.toString(), passwordText.text.toString(), newUser)
+            parentActivity.register(mailText.text.toString(), passwordText.text.toString(), newUser, weight.toDouble(), height.toDouble())
         }
-
         return view
     }
 

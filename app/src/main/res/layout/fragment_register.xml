@@ -106,6 +106,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/passwordText"
+                    android:inputType="textPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />
@@ -129,7 +130,6 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
                 android:layout_weight="1"
                 android:layout_margin="10dp"
                 android:hint="Peso"
@@ -154,7 +154,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
                 android:layout_margin="10dp"
                 android:hint="Altura"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
