@@ -51,17 +51,13 @@ class ProfileFragment : Fragment() {
         nameText = binding.name
         passwordText = binding.password
         birthDate = binding.birthDate
-        var oldEmail = ""
 
-        var user = auth.currentUser
-
-        val docRef = db.collection("users").document(user!!.email.toString())
+        val docRef = db.collection("users").document(auth.currentUser!!.uid)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     emailText.setText(document.get("email").toString())
-                    oldEmail = document.get("email").toString()
                     nameText.setText(document.get("name").toString())
                     birthDate.setText(document.get("birthDate").toString())
                 } else {
@@ -73,9 +69,20 @@ class ProfileFragment : Fragment() {
                 Log.d(TAG, "get failed with ", exception)
             }
 
-
         saveChanges.setOnClickListener {
-            updateCredentials(oldEmail, emailText.text.toString(), passwordText.text.toString())
+            if (!passwordText.text.isNullOrBlank()) {
+                if (passwordText.text.toString().length < 6) {
+                    Toast.makeText(
+                        myContext,
+                        "Password deve conter mais de 6 caracteres!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    updateCredentials(emailText.text.toString(), passwordText.text.toString())
+                }
+            } else {
+                updateCredentials(emailText.text.toString(), "")
+            }
         }
 
 
@@ -87,10 +94,7 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 
-    private fun updateCredentials(oldEmail: String, newEmail: String, newPassword: String) {
-        //Delete old document User
-        deleteOldDocumentUser(oldEmail)
-
+    private fun updateCredentials(newEmail: String, newPassword: String) {
         // [START update_email]
         val user = Firebase.auth.currentUser
 
@@ -102,36 +106,34 @@ class ProfileFragment : Fragment() {
             }
         // [END update_email]
 
-
-
-        // [START update_password]
-        user!!.updatePassword(newPassword)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "User password updated.")
+        if (!newPassword.isNullOrBlank()) {
+            // [START update_password]
+            user.updatePassword(newPassword)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User password updated.")
+                    }
                 }
-            }
-        // [END update_password]
-        var newUser = UserProfile(nameText.text.toString(), birthDate.text.toString(), newEmail)
-        createUpdatedDocumentUser(newUser)
+            // [END update_password]
+        }
+
+        val newUser = UserProfile(nameText.text.toString(), birthDate.text.toString(), newEmail)
+        updateUserInFirestore(newUser)
     }
 
-    private fun createUpdatedDocumentUser(newUser: UserProfile) {
-        db.collection("users").document(newUser.email)
+    private fun updateUserInFirestore(newUser: UserProfile) {
+        db.collection("users").document(auth.currentUser!!.uid)
             .set(newUser)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${newUser.email}")
+                Log.d(TAG, "DocumentSnapshot updated with ID: ${auth.currentUser!!.uid}")
+                Toast.makeText(
+                    myContext,
+                    "Dados atualizados com sucesso!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
     }
-
-    private fun deleteOldDocumentUser(oldEmail: String) {
-        db.collection("users").document(oldEmail)
-            .delete()
-            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
-    }
-
 }

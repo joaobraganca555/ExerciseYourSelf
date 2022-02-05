@@ -1,11 +1,13 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.authentication
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthEmailException
@@ -19,6 +21,11 @@ import pt.ipp.estg.cmu_exerciseyourself.MainActivity
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IAuthentication
 import pt.ipp.estg.cmu_exerciseyourself.model.models.UserProfile
+import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
+import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Measurements
+import java.time.LocalDateTime
+import java.util.concurrent.Executors
+import kotlin.properties.Delegates
 
 class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     // [START declare_auth]
@@ -26,6 +33,7 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
     // [END declare_auth]
     private lateinit var db: FirebaseFirestore
     private val REQUEST_MAIN_MENU = 1
+    lateinit var repository : FitnessRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("asd","Authentication Activity as been CREATED")
@@ -36,10 +44,11 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         // Initialize Firebase Auth
         auth = Firebase.auth
         // [END initialize_auth]
-
         db = Firebase.firestore
 
-        var loginFragment = LoginFragment()
+        repository = FitnessRepository(this.application)
+
+        val loginFragment = LoginFragment()
 
         // Start login fragment
         supportFragmentManager.beginTransaction()
@@ -156,7 +165,8 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
             .commit()
     }
 
-    override fun register(email: String, password: String, user: UserProfile) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun register(email: String, password: String, user: UserProfile, firstWeight: Double, firstHeight: Double) {
         if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
             // [START create_user_with_email]
             auth.createUserWithEmailAndPassword(email, password)
@@ -165,7 +175,8 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
                         val userLogin = auth.currentUser
-                        addUserToFireStore(email, user)
+                        addUserToFireStore(user)
+                        insertNewMeasurement(firstWeight, firstHeight)
                         updateUI(userLogin)
                     } else {
                         // If sign in fails, display a message to the user.
@@ -183,12 +194,26 @@ class AuthenticationActivity : AppCompatActivity(), IAuthentication {
         }
     }
 
-    private fun addUserToFireStore(email: String, user: UserProfile) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun insertNewMeasurement(weight: Double, height: Double) {
+        try {
+            val date = LocalDateTime.now().toString()
+            var newMeasurement = Measurements(null, height, weight, 0.0, 0.0, 0.0, date)
+
+            Executors.newFixedThreadPool(1).execute{
+                repository.insertMeasurement(newMeasurement)
+            }
+        }catch (e:NumberFormatException){
+            Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun addUserToFireStore(user: UserProfile) {
         // Add a new document with a generated ID
-        db.collection("users").document(email)
+        db.collection("users").document(auth.currentUser!!.uid)
             .set(user)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${email}")
+                Log.d(TAG, "DocumentSnapshot added with ID: ${auth.currentUser!!.uid}")
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
