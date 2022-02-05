@@ -27,11 +27,18 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.ChallengesAdapter
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class HealthFragment : Fragment(),SensorEventListener {
     private lateinit var binding: FragmentHealthBinding
     private lateinit var txtFootSteps: TextView
     private lateinit var circularProgressBar: CircularProgressBar
+    private lateinit var recView: RecyclerView
+    private lateinit var txtOnGoingActivity: TextView
+
+    private lateinit var repository: FitnessRepository
+
     private var sensorManager: SensorManager? = null
     private var totalSteps = 0f
     private var previousSteps = 0f
@@ -57,11 +64,6 @@ class HealthFragment : Fragment(),SensorEventListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,15 +76,15 @@ class HealthFragment : Fragment(),SensorEventListener {
 
         val root: View = binding.root
 
-        circularProgressBar = root.findViewById(R.id.circularProgressBar)
+        circularProgressBar = binding.circularProgressBar
+        txtFootSteps = binding.txtFootSteps
+        recView = binding.recViewChallenges
 
-        circularProgressBar.apply {
-            progressMax = 10000f
-        }
+        circularProgressBar.apply { progressMax = 10000f }
 
-        var recView = root.findViewById<RecyclerView>(R.id.recViewChallenges)
         var workoutsAdapter = ChallengesAdapter(ArrayList())
-        var txtOnGoingActivity = root.findViewById<TextView>(R.id.txtOnGoing)
+
+        txtOnGoingActivity = binding.txtOnGoing
 
         recView.apply {
             adapter = workoutsAdapter
@@ -90,20 +92,37 @@ class HealthFragment : Fragment(),SensorEventListener {
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
 
-        txtFootSteps = root.findViewById(R.id.txtFootSteps)
+        repository = FitnessRepository(requireActivity().application)
 
-        ViewModelProvider(this).get(WorkoutsViewModel::class.java).getAllPlannedWorkouts()
-            .observe(viewLifecycleOwner, {
+        repository.getCurrentMeasurement().observe(viewLifecycleOwner){
+            binding.weight.text = it?.weight.toString()
+            binding.height.text = it?.height.toString()
+
+            val w = it?.weight
+            val h = it?.height
+
+            val imc = h?.times(h)?.let { it1 -> w?.div(it1) }
+
+            Log.d("IMC", it?.weight.toString())
+            Log.d("IMC", it?.height.toString())
+            Log.d("IMC", "imc : " + imc.toString() )
+
+            binding.imc.text = (it?.weight?.div((it?.height).div(100)*(it?.height).div(100))
+                ?.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN).toString() })
+        }
+
+        ViewModelProvider(this)[WorkoutsViewModel::class.java].getAllPlannedWorkouts()
+            .observe(viewLifecycleOwner) {
                 workoutsAdapter.updateList(it)
-            })
+            }
 
-        ViewModelProvider(this).get(WorkoutsViewModel::class.java).getOnGoingWorkout()
-            .observe(viewLifecycleOwner, Observer {
-                if(it != null)
-                    txtOnGoingActivity.setText("A decorrer " + it.sport + " em " + it.local)
+        ViewModelProvider(this)[WorkoutsViewModel::class.java].getOnGoingWorkout()
+            .observe(viewLifecycleOwner) {
+                if (it != null)
+                    txtOnGoingActivity.text = "A decorrer " + it.sport + " em " + it.local
                 else
-                    txtOnGoingActivity.setText("Sem atividades a decorrer")
-            })
+                    txtOnGoingActivity.text = "Sem atividades a decorrer"
+            }
         return root
     }
 
