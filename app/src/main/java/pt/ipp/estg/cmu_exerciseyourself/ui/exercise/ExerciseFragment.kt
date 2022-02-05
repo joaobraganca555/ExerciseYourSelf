@@ -33,18 +33,19 @@ import kotlin.collections.ArrayList
 class ExerciseFragment : Fragment() {
     private lateinit var binding: FragmentManualExerciseBinding
     var totalWorkouts:List<Workouts>? = null
+
     var barChartDistance:BarChart? = null
     var barChartCalories:BarChart? = null
+    var barChartDuration:BarChart? = null
+
     var entryList:ArrayList<BarEntry>? = null
     var entryListCalories:ArrayList<BarEntry>? = null
+    var entryListDuration:ArrayList<BarEntry>? = null
+
     var labelsNames:ArrayList<String>? = ArrayList(
         Arrays.asList("Jan","Fev","Mar","Abr","Mai","Jun","Jul","Aug","Set","Out","Nov","Dez"))
     lateinit var repository: FitnessRepository
     lateinit var hostActivity:IServiceController
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -62,6 +63,7 @@ class ExerciseFragment : Fragment() {
     ): View? {
         binding = FragmentManualExerciseBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
         val btnAdd = binding.iconAdd
 
         btnAdd.setOnClickListener {
@@ -70,22 +72,28 @@ class ExerciseFragment : Fragment() {
 
         repository = FitnessRepository(requireActivity().application)
 
-        barChartDistance = root.findViewById(R.id.barChartDistance)
-        barChartCalories = root.findViewById(R.id.barChartCalories)
+        barChartDistance = binding.barChartDistance
+        barChartCalories = binding.barChartCalories
+        barChartDuration = binding.barChartDuration
 
         setupChartDistance()
         setupChartCalories()
+        setupChartDuration()
 
-        repository.getAllWorkouts().observe(viewLifecycleOwner,{
+        repository.getAllWorkouts().observe(viewLifecycleOwner) {
             totalWorkouts = it
+
             entryList = ArrayList()
             entryListCalories = ArrayList()
+            entryListDuration = ArrayList()
+
             getCaloriesLastDays()
+            getDurationLastDays()
 
             //Calculate each month
-            for (i in 1..12){
+            for (i in 1..12) {
                 var totalDistance = getTotalDistanceByMonth(i)
-                if(totalDistance!= null)
+                if (totalDistance != null)
                     entryList?.add(BarEntry(i.toFloat(), totalDistance))
                 else
                     entryList?.add(BarEntry(i.toFloat(), 0f))
@@ -94,20 +102,20 @@ class ExerciseFragment : Fragment() {
             barDataSet.setColors(*ColorTemplate.LIBERTY_COLORS)
             val data = BarData(barDataSet)
             barChartDistance?.data = data
-        })
+        }
 
         // Inflate the layout for this fragment
         return root
     }
 
-    fun setupChartDistance(){
+    private fun setupChartDistance(){
         barChartDistance?.let{
-            val xAxis: XAxis = it.getXAxis()
+            val xAxis: XAxis = it.xAxis
             xAxis.setCenterAxisLabels(true)
             xAxis.setDrawGridLines(false)
             xAxis.granularity = 1f;
-            xAxis.setLabelCount(labelsNames?.size!!)
-            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+            xAxis.labelCount = labelsNames?.size!!
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.setGranularity(1f)
             xAxis.setAvoidFirstLastClipping(true)
             xAxis.labelRotationAngle = -40f
@@ -124,15 +132,38 @@ class ExerciseFragment : Fragment() {
         }
     }
 
-    fun setupChartCalories(){
+    private fun setupChartCalories(){
         barChartCalories?.let{
-            val xAxis: XAxis = it.getXAxis()
+            val xAxis: XAxis = it.xAxis
             xAxis.setCenterAxisLabels(true)
             xAxis.setDrawGridLines(false)
             xAxis.granularity = 1f;
-            xAxis.setLabelCount(7)
-            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
-            xAxis.setGranularity(1f)
+            xAxis.labelCount = 7
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.granularity = 1f
+            xAxis.setAvoidFirstLastClipping(true)
+            it.xAxis.isEnabled = false
+            it.axisLeft.setDrawLabels(false)
+            it.axisLeft.setDrawGridLines(false)
+            it.xAxis.setDrawAxisLine(false)
+
+            it.axisRight.isEnabled = false
+            it.legend.isEnabled = false
+            it.description.isEnabled = false
+            it.animateY(2000)
+            it.invalidate()
+        }
+    }
+
+    private fun setupChartDuration(){
+        barChartDuration?.let{
+            val xAxis: XAxis = it.xAxis
+            xAxis.setCenterAxisLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f;
+            xAxis.labelCount = 7
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.granularity = 1f
             xAxis.setAvoidFirstLastClipping(true)
             it.xAxis.isEnabled = false
             it.axisLeft.setDrawLabels(false)
@@ -176,5 +207,30 @@ class ExerciseFragment : Fragment() {
         barDataSetCalories.setColors(*ColorTemplate.LIBERTY_COLORS)
         val data = BarData(barDataSetCalories)
         barChartCalories?.data = data
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getDurationLastDays(){
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (i in 1..6){
+            var totalDuration = 0
+            var targetDay = LocalDateTime.now().minusDays(i.toLong())
+            var workoutsByDay = totalWorkouts?.filter {
+                LocalDateTime.parse(it.beginDate).format(formatter).equals(targetDay.format(formatter))
+            }
+
+            Log.d("DURA", workoutsByDay?.map{it.duration}.toString())
+
+            totalDuration = workoutsByDay?.map { it.duration.toInt() }?.sum() ?: 0
+
+            Log.d("DURA", "total" + totalDuration.toFloat().toString())
+
+            entryListDuration?.add(BarEntry(i.toFloat(), totalDuration.toFloat()))
+        }
+
+        val barDataSetDuration = BarDataSet(entryListDuration, "")
+        barDataSetDuration.setColors(*ColorTemplate.LIBERTY_COLORS)
+        val data = BarData(barDataSetDuration)
+        barChartDuration?.data = data
     }
 }
