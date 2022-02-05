@@ -264,9 +264,11 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onAlertDialog(view: View, workout: Workouts) {
+        val sharedPreferences = (myContext as Context).getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val savedUser = sharedPreferences.getString("user","user")
 
         var record = workout.beginDate + " " +
-                workout.sport
+                workout.sport + " " + savedUser
 
         val builder = AlertDialog.Builder(view.context)
         builder.setTitle("Treino Terminado")

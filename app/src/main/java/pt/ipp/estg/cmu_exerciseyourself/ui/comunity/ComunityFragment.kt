@@ -57,9 +57,6 @@ class ComunityFragment : Fragment() {
     }
 
     fun updateMessages(){
-        val sharedPreferences = myContext.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val savedUser = sharedPreferences.getString("user","user")
-
         val docRef = db.collection("comunity").document("workouts")
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -75,6 +72,7 @@ class ComunityFragment : Fragment() {
                     var fieldsList = item.split(" ")
                     var date:String = fieldsList.get(0)
                     var sport:String = fieldsList.get(1)
+                    var savedUser:String = fieldsList.get(2)
                     if(date!= null && sport!= null){
                         updatedList.add(WorkoutChat(date!!,sport!!,savedUser))
                     }
