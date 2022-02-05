@@ -107,7 +107,7 @@ class DiscoverFragment : Fragment() {
         }
 
         findPlacesButton.setOnClickListener {
-            val radius = radiusText.text.toString()
+            val radius = (radiusText.text.toString().toInt() * 1000).toString()
             if (radius.isNullOrEmpty()) {
                 Toast.makeText(myContext,"Por favor preencha o raio!", Toast.LENGTH_LONG).show()
             } else if (radius.toInt() in 1..20000) {

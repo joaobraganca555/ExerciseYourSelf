@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="15dp"
-    tools:context=".ui.exercise.ManualExercise">
+    tools:context=".ui.exercise.ExerciseFragment">
     <ImageView
         android:id="@+id/iconAdd"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="right"
-        android:layout_margin="15dp"
+        android:layout_marginBottom="5dp"
         android:src="@drawable/ic_baseline_add_24"/>
     <ScrollView
         android:layout_width="match_parent"
@@ -21,6 +21,42 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                tools:ignore="ExtraText"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Duração (min)"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:layout_gravity="left" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tempo de exercicío nos últimos 7 dias"
+                        android:textSize="10sp"
+                        android:layout_gravity="left"/>
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/barChartDuration"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_height="100dp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,6 +130,7 @@
                         android:layout_height="100dp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
     </ScrollView>

@@ -72,9 +72,10 @@ class MeasurementsFragment : Fragment() {
 
         repository.getCurrentMeasurement().observe(viewLifecycleOwner){
             val cm = " cm"
-            binding.belly.text = it.belly.toString() + cm
-            binding.chest.text = it.chest.toString() + cm
-            binding.height.text = it.height.toString() + cm
+            binding.belly.text = it?.belly.toString() + cm
+            binding.chest.text = it?.chest.toString() + cm
+            binding.height.text = it?.height.toString() + cm
+            binding.weight.text = it?.weight.toString() + cm
         }
 
         repository.getAllMeasurements().observe(viewLifecycleOwner) {
