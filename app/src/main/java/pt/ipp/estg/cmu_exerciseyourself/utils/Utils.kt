@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 
 const val PERMISSION_REQUEST_CODE = 555
+data class WorkoutChat(val data:String,val sport:String)
 
 enum class Sport{
     RUNNING_OUTDOOR,

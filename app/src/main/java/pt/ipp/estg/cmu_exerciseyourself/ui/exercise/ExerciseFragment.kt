@@ -1,6 +1,7 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.exercise
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -26,6 +27,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.newFixedThreadPoolContext
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
@@ -37,6 +42,7 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Executors
@@ -47,11 +53,13 @@ import kotlin.math.roundToInt
 class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private var _binding: FragmentExerciseBinding? = null
     private val binding get() = _binding!!
+    var db = FirebaseFirestore.getInstance()
     private lateinit var myContext: IServiceController
     lateinit var supportMapFragment: SupportMapFragment
     lateinit var workoutViewModel: WorkoutsViewModel
     val current = LatLng(37.129665, -8.669586)
     var marker = MarkerOptions().position(LatLng(37.129665, -8.669586))
+    var workoutWithCoord:WorkoutWithCoord? = null
 
     var listCoordinates = ArrayList<Coordinates>()
 
@@ -103,6 +111,9 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
         _binding = FragmentExerciseBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        binding.btnStop.isEnabled = false
+        binding.btnStop.isClickable = false
 
         repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
             if (it == null) {
@@ -167,25 +178,30 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveWorkout() {
+        var workout = Workouts(
+            sport = Sport.RUNNING_OUTDOOR.toString(),
+            duration = getTimerText(),
+            status = Status.SUCCESSFULLY.toString(),
+            distance = distance,
+            local = "null",
+            footsteps = currentSteps,
+            beginDate = beginDate.toString(),
+            finishedDate = endDate.toString(),
+            workoutId = null,
+            calories = caloriesBurned
+        )
+
         Executors.newFixedThreadPool(1).execute {
-            val workout = Workouts(
-                sport = Sport.RUNNING_OUTDOOR.toString(),
-                duration = getTimerText(),
-                status = Status.SUCCESSFULLY.toString(),
-                distance = distance,
-                local = "null",
-                footsteps = currentSteps,
-                beginDate = beginDate.toString(),
-                finishedDate = endDate.toString(),
-                workoutId = null,
-                calories = caloriesBurned
-            )
+
             val listCoord = listCoordinates
 
-            val workoutWithCoord = WorkoutWithCoord(workout, listCoord)
-            repository.insertWorkoutWithCoord(workoutWithCoord)
+            workoutWithCoord = WorkoutWithCoord(workout, listCoord)
+            repository.insertWorkoutWithCoord(workoutWithCoord!!)
         }
+            onAlertDialog(binding.container,workout)
     }
+
+
 
     private fun getCalories(): String {
         caloriesBurned = (weight * distance).toInt()
@@ -259,4 +275,30 @@ class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         ).show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onAlertDialog(view: View, workout: Workouts) {
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+        var record = LocalDateTime.parse(workout.beginDate).format(formatter) + " " +
+                workout.sport
+
+        val builder = AlertDialog.Builder(view.context)
+        builder.setTitle("Treino Terminado")
+        builder.setMessage("Deseja publicar o treino com a comunidade?")
+
+        builder.setPositiveButton(
+            "Publicar") { dialog, id ->
+            var workoutsRef = db.collection("comunity").document("workouts")
+            workoutsRef.update(
+                "published", FieldValue.arrayUnion("$record"))
+        }
+
+        builder.setNegativeButton(
+            "Desta Vez Não") { dialog, id ->
+        }
+        builder.show()
+    }
 }
+
+
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_margin="15dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_margin="15dp">
+        <ImageView
+            android:id="@+id/imgSport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_running"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/txtSport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Running"
+            android:textSize="15sp"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/txtDateBegin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25 de Dezembro"
+            android:textSize="15sp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
