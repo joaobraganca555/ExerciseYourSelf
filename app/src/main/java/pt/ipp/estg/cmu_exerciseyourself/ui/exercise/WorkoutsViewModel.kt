@@ -28,7 +28,8 @@ class WorkoutsViewModel(application: Application):AndroidViewModel(application) 
     fun getOnGoingWorkout():LiveData<Workouts>{
         return this.onGoingWorkout
     }
-    fun setOnGoingWorkout(workout: Workouts){
+
+    fun setOnGoingWorkout(workout: Workouts?){
         this.onGoingWorkout.value = workout
     }
 

@@ -50,7 +50,7 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
     lateinit var workoutViewModel: WorkoutsViewModel
     val current = LatLng(37.129665, -8.669586)
     var marker = MarkerOptions().position(LatLng(37.129665, -8.669586))
-    var workoutWithCoord:WorkoutWithCoord? = null
+    var workoutWithCoord: WorkoutWithCoord? = null
 
     var listCoordinates = ArrayList<Coordinates>()
 
@@ -103,7 +103,6 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         _binding = FragmentExerciseBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
             if (it == null) {
                 weight = 70.0
@@ -118,22 +117,49 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
             }
         }
 
+        workoutViewModel.getOnGoingWorkout().observe(viewLifecycleOwner) {
+            if (it == null) {
+
+                binding.btnStart.isEnabled = true
+                binding.btnStop.isEnabled = false
+            } else {
+                binding.btnStart.isEnabled = false
+                binding.btnStop.isEnabled = true
+            }
+        }
+
         binding.btnStart.setOnClickListener {
             beginDate = LocalDateTime.now()
             //reset polyline
             polyOptions = PolylineOptions()
-            startTimer()
+            startTimer(0)
             myContext.startAutomaticExercise()
-            binding.btnStart.isEnabled = false
-            binding.btnStart.isClickable = false
+
+            workoutViewModel.setOnGoingWorkout(
+                Workouts(
+                    sport = "",
+                    duration = "",
+                    status = "",
+                    distance = 0.0,
+                    local = "",
+                    footsteps = 0,
+                    beginDate = beginDate.toString(),
+                    finishedDate = "",
+                    workoutId = null,
+                    calories = 0
+                )
+            )
+
         }
 
         binding.btnStop.setOnClickListener {
+
+            workoutViewModel.setOnGoingWorkout(null)
+
             endDate = LocalDateTime.now()
             timerTask.cancel()
             myContext.stopAutomaticExercise()
-            binding.btnStart.isEnabled = true
-            binding.btnStart.isClickable = true
+
             saveWorkout()
         }
 
@@ -165,6 +191,29 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         return root
     }
 
+    override fun onPause() {
+        super.onPause()
+        timerTask.cancel()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        timerTask.cancel()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+
+        if (workoutViewModel.isTrackingActivity()) {
+            beginDate = LocalDateTime.parse(workoutViewModel.getOnGoingWorkout().value?.beginDate)
+
+            val sec = ChronoUnit.SECONDS.between(beginDate, LocalDateTime.now()).toInt()
+
+            startTimer(sec)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveWorkout() {
         var workout = Workouts(
@@ -187,7 +236,7 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
             workoutWithCoord = WorkoutWithCoord(workout, listCoord)
             repository.insertWorkoutWithCoord(workoutWithCoord!!)
         }
-        onAlertDialog(binding.container,workout)
+        onAlertDialog(binding.container, workout)
     }
 
     private fun getCalories(): String {
@@ -195,8 +244,8 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         return caloriesBurned.toString()
     }
 
-    private fun startTimer() {
-        time = 0.0
+    private fun startTimer(seconds: Int) {
+        time = seconds.toDouble()
         timerTask = object : TimerTask() {
             override fun run() {
                 activity?.runOnUiThread {
@@ -209,7 +258,7 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
     }
 
     fun updateTimer(timeText: String) {
-        binding.timer.setText(timeText)
+        binding.timer.text = timeText
     }
 
     fun getTimerText(): String {
@@ -264,8 +313,9 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onAlertDialog(view: View, workout: Workouts) {
-        val sharedPreferences = (myContext as Context).getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val savedUser = sharedPreferences.getString("user","user")
+        val sharedPreferences =
+            (myContext as Context).getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val savedUser = sharedPreferences.getString("user", "user")
 
         var record = workout.beginDate + " " +
                 workout.sport + " " + workout.distance.toString() + " " + savedUser
@@ -275,14 +325,17 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
         builder.setMessage("Deseja publicar o treino com a comunidade?")
 
         builder.setPositiveButton(
-            "Publicar") { dialog, id ->
+            "Publicar"
+        ) { dialog, id ->
             var workoutsRef = db.collection("comunity").document("workouts")
             workoutsRef.update(
-                "published", FieldValue.arrayUnion("$record"))
+                "published", FieldValue.arrayUnion("$record")
+            )
         }
 
         builder.setNegativeButton(
-            "Desta Vez Não") { dialog, id ->
+            "Desta Vez Não"
+        ) { dialog, id ->
         }
         builder.show()
     }
