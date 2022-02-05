@@ -11,10 +11,9 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import pt.ipp.estg.cmu_exerciseyourself.R
-import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment
+import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.AutomaticExerciseFragment
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.LocationHelper
 import pt.ipp.estg.cmu_exerciseyourself.utils.MyLocationListener
@@ -23,7 +22,6 @@ import java.math.RoundingMode
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.math.roundToInt
 
 //Fused Location API Google Play Services
 class BackgroundTrackActivity: Service() {
@@ -61,7 +59,7 @@ class BackgroundTrackActivity: Service() {
         createNotificationChannel()
 
         //Build a notification for foreground service
-        val pendingIntent: PendingIntent = Intent(this, ExerciseFragment::class.java).let {
+        val pendingIntent: PendingIntent = Intent(this, AutomaticExerciseFragment::class.java).let {
             PendingIntent.getActivity(this,0,it,0)
         }
 

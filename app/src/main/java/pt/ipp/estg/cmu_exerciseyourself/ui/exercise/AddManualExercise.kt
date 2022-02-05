@@ -23,25 +23,24 @@ import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import java.lang.ClassCastException
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.Executors
 
 class AddManualExercise : Fragment() {
     lateinit var repository: FitnessRepository
-    lateinit var txtBeginDate:TextInputEditText
-    lateinit var txtDistance:TextInputEditText
-    lateinit var txtCal:TextInputEditText
-    lateinit var txtFootSteps:TextInputEditText
+    lateinit var txtBeginDate: TextInputEditText
+    lateinit var txtDistance: TextInputEditText
+    lateinit var txtCal: TextInputEditText
+    lateinit var txtDuration: TextInputEditText
+    lateinit var txtFootSteps: TextInputEditText
     lateinit var myContext: Context
     lateinit var checkBoxSchedule: CheckBox
-    var activityAction:String = "Registar_Treino"
-    var beginDateActivity:LocalDateTime? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    var activityAction: String = "Registar_Treino"
+    var beginDateActivity: LocalDateTime? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -61,13 +60,14 @@ class AddManualExercise : Fragment() {
         txtBeginDate = view.findViewById(R.id.dateText)
         txtDistance = view.findViewById(R.id.txtDistance)
         txtCal = view.findViewById(R.id.txtCal)
+        txtDuration = view.findViewById(R.id.txtDuration)
         txtFootSteps = view.findViewById(R.id.txtNumFootsteps)
         checkBoxSchedule = view.findViewById(R.id.checkbox_schedule)
 
         checkBoxSchedule.setOnClickListener {
-            if(this.activityAction.equals("Agendar_Treino")){
+            if (this.activityAction.equals("Agendar_Treino")) {
                 this.activityAction = "Registar_Treino"
-            }else{
+            } else {
                 this.activityAction = "Agendar_Treino"
             }
         }
@@ -88,8 +88,12 @@ class AddManualExercise : Fragment() {
         beginDateImage.setOnClickListener {
             activity?.let { activity ->
                 DatePickerDialog(
-                    activity, datePicker, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+                    activity,
+                    datePicker,
+                    myCalendar.get(Calendar.YEAR),
+                    myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
             }
         }
 
@@ -106,37 +110,50 @@ class AddManualExercise : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun registerActivity(){
-        val distance:Double
-        val footSteps:Int
-        val beginDateTime:String
-        val calories:Int
-        val status:String
+    private fun registerActivity() {
+        val distance: Double
+        val footSteps: Int
+        val beginDateTime: String
+        val calories: Int
+        val duration: Int
+        val status: String
 
-        if(txtDistance.text.toString().isEmpty()) distance = 0.0 else distance = txtDistance.text.toString().toDouble()
-        if(txtFootSteps.text.toString().isEmpty()) footSteps = 0 else footSteps = txtDistance.text.toString().toInt()
-        if(txtCal.text.toString().isEmpty()) calories = 0 else calories = txtCal.text.toString().toInt()
-        if(this.activityAction.equals("Registar_Treino")) status=Status.SUCCESSFULLY.toString() else status = Status.PLANNED.toString()
-        if(beginDateActivity == null){
-                Toast.makeText(myContext,"Data de Inicio deve ser definida",Toast.LENGTH_LONG).show()
-                return
-        }else if(beginDateActivity!!.isAfter(LocalDateTime.now())
-            && activityAction.equals("Registar_Treino")){
-                Toast.makeText(myContext,"A data deve ser anterior à data atual",Toast.LENGTH_LONG).show()
-        }else if(beginDateActivity!!.isBefore(LocalDateTime.now())
-            && activityAction.equals("Agendar_Treino")){
-            Toast.makeText(myContext,"A data deve ser posterior à data atual",Toast.LENGTH_LONG).show()
-        }else
-        {
+        distance = if (txtDistance.text.toString().isEmpty()) 0.0 else txtDistance.text.toString().toDouble()
+        footSteps = if (txtFootSteps.text.toString().isEmpty()) 0 else txtFootSteps.text.toString().toInt()
+        calories = if (txtCal.text.toString().isEmpty()) 0 else txtCal.text.toString().toInt()
+        duration = if (txtDuration.text.toString().isEmpty()) 0 else txtDuration.text.toString().toInt()
+        status = if (this.activityAction == "Registar_Treino") Status.SUCCESSFULLY.toString() else Status.PLANNED.toString()
+        if (beginDateActivity == null) {
+            Toast.makeText(myContext, "Data de Inicio deve ser definida", Toast.LENGTH_LONG).show()
+            return
+        } else if (beginDateActivity!!.isAfter(LocalDateTime.now())
+            && activityAction == "Registar_Treino"
+        ) {
+            Toast.makeText(myContext, "A data deve ser anterior à data atual", Toast.LENGTH_LONG)
+                .show()
+        } else if (beginDateActivity!!.isBefore(LocalDateTime.now())
+            && activityAction == "Agendar_Treino"
+        ) {
+            Toast.makeText(myContext, "A data deve ser posterior à data atual", Toast.LENGTH_LONG)
+                .show()
+        } else {
             Executors.newFixedThreadPool(1).execute {
-                val workout = Workouts(sport = Sport.RUNNING_OUTDOOR.toString(), duration = "",
-                    status = status, distance = distance ,
-                    local = "", footsteps = footSteps,
+                val workout = Workouts(
+                    sport = Sport.RUNNING_OUTDOOR.toString(),
+                    status = status,
+                    distance = distance,
+                    duration = duration.toString(),
+                    local = "",
+                    footsteps = footSteps,
                     beginDate = beginDateActivity.toString(),
-                    finishedDate =  beginDateActivity.toString(), workoutId = null,
-                    calories = calories)
-                val listCoord=ArrayList<Coordinates>()
-                val workoutWithCoord = WorkoutWithCoord(workout,listCoord)
+                    finishedDate = beginDateActivity.toString(),
+                    workoutId = null,
+                    calories = calories
+                )
+                Log.d("WORKOUTS", workout.toString())
+                val listCoord = ArrayList<Coordinates>()
+                val workoutWithCoord = WorkoutWithCoord(workout, listCoord)
+
                 repository.insertWorkoutWithCoord(workoutWithCoord)
             }
             (myContext as IServiceController).openExerciseView()

@@ -1,304 +1,236 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.exercise
 
-import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import kotlinx.coroutines.newFixedThreadPoolContext
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.utils.ColorTemplate
 import pt.ipp.estg.cmu_exerciseyourself.R
-import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentExerciseBinding
-import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
-import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
-import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentManualExerciseBinding
+import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
-import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
+import java.lang.ClassCastException
 import java.time.LocalDateTime
+import java.time.Month
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
-import kotlin.concurrent.timerTask
-import kotlin.math.roundToInt
 
-class ExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
-    private var _binding: FragmentExerciseBinding? = null
-    private val binding get() = _binding!!
-    var db = FirebaseFirestore.getInstance()
-    private lateinit var myContext: IServiceController
-    lateinit var supportMapFragment: SupportMapFragment
-    lateinit var workoutViewModel: WorkoutsViewModel
-    val current = LatLng(37.129665, -8.669586)
-    var marker = MarkerOptions().position(LatLng(37.129665, -8.669586))
-    var workoutWithCoord:WorkoutWithCoord? = null
+class ExerciseFragment : Fragment() {
+    private lateinit var binding: FragmentManualExerciseBinding
+    var totalWorkouts:List<Workouts>? = null
 
-    var listCoordinates = ArrayList<Coordinates>()
+    var barChartDistance:BarChart? = null
+    var barChartCalories:BarChart? = null
+    var barChartDuration:BarChart? = null
 
-    lateinit var polyOptions: PolylineOptions
-    var googlemap: GoogleMap? = null
+    var entryList:ArrayList<BarEntry>? = null
+    var entryListCalories:ArrayList<BarEntry>? = null
+    var entryListDuration:ArrayList<BarEntry>? = null
 
-    private var sensorManager: SensorManager? = null
-
-    private var timer = object : Timer() {}
-    private lateinit var timerTask: TimerTask
-    var time: Double = 0.0
-
-    private lateinit var beginDate: LocalDateTime
-    lateinit var endDate: LocalDateTime
-
-    var distance = 0.0
-    private var caloriesBurned = 0
-    private var weight = 0.0
-
-    private var currentSteps = 0
-    private var done = false
-
-    private lateinit var repository: FitnessRepository
+    var labelsNames:ArrayList<String>? = ArrayList(
+        Arrays.asList("Jan","Fev","Mar","Abr","Mai","Jun","Jul","Aug","Set","Out","Nov","Dez"))
+    lateinit var repository: FitnessRepository
+    lateinit var hostActivity:IServiceController
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        myContext = context as IServiceController
-        repository = FitnessRepository(requireActivity().application)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        workoutViewModel = ViewModelProvider(requireActivity()).get(WorkoutsViewModel::class.java)
-
-        val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        if (stepSensor == null) {
-            Log.d("asd", "No sensor detected on this device.")
-        } else {
-            sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
+        try{
+            hostActivity = context as IServiceController
+        }catch (e: ClassCastException){
+            Log.d("error", "onAttach: $e")
+            Toast.makeText(context,"An problem occurred.Please try later.", Toast.LENGTH_SHORT).show()
         }
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        _binding = FragmentExerciseBinding.inflate(inflater, container, false)
+        binding = FragmentManualExerciseBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.btnStop.isEnabled = false
-        binding.btnStop.isClickable = false
+        val btnAdd = binding.iconAdd
 
-        repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
-            if (it == null) {
-                weight = 70.0
-                Toast.makeText(
-                    context,
-                    "Nenhuma medição encontrada, porfavor adicionar uma",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                weight = it.weight
+        btnAdd.setOnClickListener {
+            hostActivity.openAddActivity()
+        }
 
+        repository = FitnessRepository(requireActivity().application)
+
+        barChartDistance = binding.barChartDistance
+        barChartCalories = binding.barChartCalories
+        barChartDuration = binding.barChartDuration
+
+        setupChartDistance()
+        setupChartCalories()
+        setupChartDuration()
+
+        repository.getAllWorkouts().observe(viewLifecycleOwner) {
+            totalWorkouts = it
+
+            entryList = ArrayList()
+            entryListCalories = ArrayList()
+            entryListDuration = ArrayList()
+
+            getCaloriesLastDays()
+            getDurationLastDays()
+
+            //Calculate each month
+            for (i in 1..12) {
+                var totalDistance = getTotalDistanceByMonth(i)
+                if (totalDistance != null)
+                    entryList?.add(BarEntry(i.toFloat(), totalDistance))
+                else
+                    entryList?.add(BarEntry(i.toFloat(), 0f))
             }
+            val barDataSet = BarDataSet(entryList, "")
+            barDataSet.setColors(*ColorTemplate.LIBERTY_COLORS)
+            val data = BarData(barDataSet)
+            barChartDistance?.data = data
         }
 
-        binding.btnStart.setOnClickListener {
-            beginDate = LocalDateTime.now()
-            //reset polyline
-            polyOptions = PolylineOptions()
-            startTimer()
-            myContext.startAutomaticExercise()
-            binding.btnStart.isEnabled = false
-            binding.btnStart.isClickable = false
-        }
-
-        binding.btnStop.setOnClickListener {
-            endDate = LocalDateTime.now()
-            timerTask.cancel()
-            myContext.stopAutomaticExercise()
-            binding.btnStart.isEnabled = true
-            binding.btnStart.isClickable = true
-            saveWorkout()
-        }
-
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
-        mapFragment?.getMapAsync(this)
-
-        polyOptions = PolylineOptions()
-        workoutViewModel.getCurrentPosition().observe(viewLifecycleOwner) {
-            googlemap?.apply {
-                animateCamera(CameraUpdateFactory.newLatLngZoom(it, 16f))
-                clear()
-                addMarker(
-                    MarkerOptions().position(it)
-                )
-                polyOptions.add(it)
-                addPolyline(polyOptions)
-
-                var coord = Coordinates(it.latitude, it.longitude, null, null)
-                listCoordinates.add(coord)
-            }
-        }
-
-        workoutViewModel.getDistance().observe(viewLifecycleOwner) {
-            distance = it.toString().toDouble()
-            binding.totalDistance.text = it.toString()
-            binding.calories.text = getCalories()
-        }
-
+        // Inflate the layout for this fragment
         return root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun saveWorkout() {
-        var workout = Workouts(
-            sport = Sport.RUNNING_OUTDOOR.toString(),
-            duration = getTimerText(),
-            status = Status.SUCCESSFULLY.toString(),
-            distance = distance,
-            local = "null",
-            footsteps = currentSteps,
-            beginDate = beginDate.toString(),
-            finishedDate = endDate.toString(),
-            workoutId = null,
-            calories = caloriesBurned
-        )
+    private fun setupChartDistance(){
+        barChartDistance?.let{
+            val xAxis: XAxis = it.xAxis
+            xAxis.setCenterAxisLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f;
+            xAxis.labelCount = labelsNames?.size!!
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.setGranularity(1f)
+            xAxis.setAvoidFirstLastClipping(true)
+            xAxis.labelRotationAngle = -40f
+            xAxis.valueFormatter = IndexAxisValueFormatter(labelsNames)
+            it.axisLeft.setDrawLabels(false)
+            it.axisLeft.setDrawGridLines(false)
+            it.xAxis.setDrawAxisLine(false)
 
-        Executors.newFixedThreadPool(1).execute {
-
-            val listCoord = listCoordinates
-
-            workoutWithCoord = WorkoutWithCoord(workout, listCoord)
-            repository.insertWorkoutWithCoord(workoutWithCoord!!)
+            it.axisRight.isEnabled = false
+            it.legend.isEnabled = false
+            it.description.isEnabled = false
+            it.animateY(2000)
+            it.invalidate()
         }
-            onAlertDialog(binding.container,workout)
     }
 
+    private fun setupChartCalories(){
+        barChartCalories?.let{
+            val xAxis: XAxis = it.xAxis
+            xAxis.setCenterAxisLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f;
+            xAxis.labelCount = 7
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.granularity = 1f
+            xAxis.setAvoidFirstLastClipping(true)
+            it.xAxis.isEnabled = false
+            it.axisLeft.setDrawLabels(false)
+            it.axisLeft.setDrawGridLines(false)
+            it.xAxis.setDrawAxisLine(false)
 
-
-    private fun getCalories(): String {
-        caloriesBurned = (weight * distance).toInt()
-        return caloriesBurned.toString()
+            it.axisRight.isEnabled = false
+            it.legend.isEnabled = false
+            it.description.isEnabled = false
+            it.animateY(2000)
+            it.invalidate()
+        }
     }
 
-    private fun startTimer() {
-        time = 0.0
-        timerTask = object : TimerTask() {
-            override fun run() {
-                activity?.runOnUiThread {
-                    time++
-                    updateTimer(getTimerText())
-                }
+    private fun setupChartDuration(){
+        barChartDuration?.let{
+            val xAxis: XAxis = it.xAxis
+            xAxis.setCenterAxisLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f;
+            xAxis.labelCount = 7
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.granularity = 1f
+            xAxis.setAvoidFirstLastClipping(true)
+            it.xAxis.isEnabled = false
+            it.axisLeft.setDrawLabels(false)
+            it.axisLeft.setDrawGridLines(false)
+            it.xAxis.setDrawAxisLine(false)
+
+            it.axisRight.isEnabled = false
+            it.legend.isEnabled = false
+            it.description.isEnabled = false
+            it.animateY(2000)
+            it.invalidate()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getTotalDistanceByMonth(month:Int):Float?{
+        var workoutsByMonth = totalWorkouts?.filter {
+            LocalDateTime.parse(it.beginDate).month == Month.of(month)
+                    && !it.status.equals(Status.PLANNED.toString())
+        }
+
+        var totalDistance = workoutsByMonth?.map { it.distance }?.sum()
+        return totalDistance?.toFloat()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCaloriesLastDays(){
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (i in 1..6){
+            var totalCalories = 0
+            var targetDay = LocalDateTime.now().minusDays(i.toLong())
+            var workoutsByDay = totalWorkouts?.filter {
+                LocalDateTime.parse(it.beginDate).format(formatter).equals(targetDay.format(formatter))
             }
+
+            totalCalories = workoutsByDay?.map { it.calories }?.sum() ?: 0
+            entryListCalories?.add(BarEntry(i.toFloat(), totalCalories.toFloat()))
         }
-        timer.scheduleAtFixedRate(timerTask, 0, 1000)
-    }
 
-    fun updateTimer(timeText: String) {
-        binding.timer.setText(timeText)
-    }
-
-    fun getTimerText(): String {
-        var rounded = time.roundToInt()
-
-        var seconds = ((rounded % 86400) % 3600) % 60
-        var minutes = ((rounded % 86400) % 3600) / 60
-        var hours = ((rounded % 86400) / 3600)
-
-        return formatTime(seconds, minutes, hours)
-    }
-
-    private fun formatTime(seconds: Int, minutes: Int, hours: Int): String {
-        return String.format("%02d", hours) + " : " + String.format(
-            "%02d",
-            minutes
-        ) + " : " + String.format("%02d", seconds)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onMapReady(googleMap: GoogleMap?) {
-        this.googlemap = googleMap
-        googleMap?.apply {
-            addMarker(
-                marker
-            )
-            addPolyline(polyOptions)
-            animateCamera(CameraUpdateFactory.newLatLngZoom(current, 16f));
-        }
-    }
-
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (!done) {
-            currentSteps = event!!.values[0].toInt()
-            done = true
-        }
-        currentSteps += event!!.values[0].toInt()
-        Toast.makeText(
-            myContext as Context,
-            "Current steps: ".plus(currentSteps.toString()),
-            Toast.LENGTH_SHORT
-        ).show()
+        val barDataSetCalories = BarDataSet(entryListCalories, "")
+        barDataSetCalories.setColors(*ColorTemplate.LIBERTY_COLORS)
+        val data = BarData(barDataSetCalories)
+        barChartCalories?.data = data
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onAlertDialog(view: View, workout: Workouts) {
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private fun getDurationLastDays(){
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (i in 1..6){
+            var totalDuration = 0
+            var targetDay = LocalDateTime.now().minusDays(i.toLong())
+            var workoutsByDay = totalWorkouts?.filter {
+                LocalDateTime.parse(it.beginDate).format(formatter).equals(targetDay.format(formatter))
+            }
 
-        var record = LocalDateTime.parse(workout.beginDate).format(formatter) + " " +
-                workout.sport
+            Log.d("DURA", workoutsByDay?.map{it.duration}.toString())
 
-        val builder = AlertDialog.Builder(view.context)
-        builder.setTitle("Treino Terminado")
-        builder.setMessage("Deseja publicar o treino com a comunidade?")
+            totalDuration = workoutsByDay?.map { it.duration.toInt() }?.sum() ?: 0
 
-        builder.setPositiveButton(
-            "Publicar") { dialog, id ->
-            var workoutsRef = db.collection("comunity").document("workouts")
-            workoutsRef.update(
-                "published", FieldValue.arrayUnion("$record"))
+            Log.d("DURA", "total" + totalDuration.toFloat().toString())
+
+            entryListDuration?.add(BarEntry(i.toFloat(), totalDuration.toFloat()))
         }
 
-        builder.setNegativeButton(
-            "Desta Vez Não") { dialog, id ->
-        }
-        builder.show()
+        val barDataSetDuration = BarDataSet(entryListDuration, "")
+        barDataSetDuration.setColors(*ColorTemplate.LIBERTY_COLORS)
+        val data = BarData(barDataSetDuration)
+        barChartDuration?.data = data
     }
 }
-
-
-

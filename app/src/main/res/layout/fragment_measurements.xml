@@ -6,7 +6,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical"
 android:padding="15dp"
-tools:context=".ui.exercise.ManualExercise">
+tools:context=".ui.exercise.ExerciseFragment">
 
 <ImageView
     android:id="@+id/addMeasure"
@@ -86,58 +86,99 @@ tools:context=".ui.exercise.ManualExercise">
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Altura"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_gravity="left" />
-                <TextView
-                    android:id="@+id/height"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Sem Atividades"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_gravity="left"
-                    />
-            </LinearLayout>
-
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:layout_weight="1"
-                    android:text="Largura do peito"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_gravity="left" />
-                <TextView
-                    android:id="@+id/chest"
-                    android:layout_width="wrap_content"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Peso"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:layout_gravity="left" />
+                    <TextView
+                        android:id="@+id/weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="10 kg"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:layout_gravity="left"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Sem Atividades"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_gravity="left"
-                    />
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Altura"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:layout_gravity="left" />
+                    <TextView
+                        android:id="@+id/height"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="180 cm"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:layout_gravity="left"
+                        />
+                </LinearLayout>
+
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Largura do peito"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:layout_gravity="left" />
+                    <TextView
+                        android:id="@+id/chest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="100 cm"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:layout_gravity="left"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
+                    android:layout_weight="1"
                 android:padding="10dp">
                 <TextView
                     android:layout_width="wrap_content"
@@ -150,11 +191,13 @@ tools:context=".ui.exercise.ManualExercise">
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Sem Atividades"
+                    android:text="222 cm"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
                     android:layout_gravity="left"
                     />
+            </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
