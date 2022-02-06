@@ -1,4 +1,4 @@
-package pt.ipp.estg.cmu_exerciseyourself.ui.health
+package pt.ipp.estg.cmu_exerciseyourself.ui.home
 
 import android.content.Context
 import android.content.Context.SENSOR_SERVICE
@@ -11,26 +11,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
-import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.databinding.FragmentHealthBinding
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
-import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.ChallengesAdapter
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class HealthFragment : Fragment(),SensorEventListener {
+class HomeFragment : Fragment(),SensorEventListener {
     private lateinit var binding: FragmentHealthBinding
     private lateinit var txtFootSteps: TextView
     private lateinit var circularProgressBar: CircularProgressBar
@@ -133,6 +128,7 @@ class HealthFragment : Fragment(),SensorEventListener {
         binding.circularProgressBarCal.apply {
             setProgressWithAnimation(currentSteps.toFloat()*0.04f)
         }
+        binding.txtLabelCal.text = (currentSteps.toFloat()*0.04f).toString()
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {

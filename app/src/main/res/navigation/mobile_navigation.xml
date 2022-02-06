@@ -6,7 +6,7 @@
     app:startDestination="@+id/navigation_health">
     <fragment
         android:id="@+id/navigation_health"
-        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.health.HealthFragment"
+        android:name="pt.ipp.estg.cmu_exerciseyourself.ui.home.HomeFragment"
         android:label="Inicío"
         tools:layout="@layout/fragment_health" />
     <fragment
