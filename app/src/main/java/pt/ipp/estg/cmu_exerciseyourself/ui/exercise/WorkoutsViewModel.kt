@@ -11,14 +11,16 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 
 class WorkoutsViewModel(application: Application):AndroidViewModel(application) {
     val fitnessRepo:FitnessRepository
-    val plannedWorkouts:LiveData<List<Workouts>>
-    val onGoingWorkout:MutableLiveData<Workouts> = MutableLiveData()
-    val currentPosition:MutableLiveData<LatLng> = MutableLiveData()
+    private val plannedWorkouts:LiveData<List<Workouts>>
+    private val onGoingWorkout:MutableLiveData<Workouts> = MutableLiveData()
+    private val currentPosition:MutableLiveData<LatLng> = MutableLiveData()
+    private var allPositions:MutableLiveData<ArrayList<LatLng>> = MutableLiveData()
     val distance:MutableLiveData<Double> = MutableLiveData()
 
     init{
         fitnessRepo = FitnessRepository(application)
         plannedWorkouts = fitnessRepo.getAllPlannedWorkouts()
+        allPositions.value = ArrayList()
     }
 
     fun isTrackingActivity():Boolean = (onGoingWorkout.value != null)
@@ -35,6 +37,7 @@ class WorkoutsViewModel(application: Application):AndroidViewModel(application) 
 
     fun setCurrentPosition(currentPos:LatLng){
         this.currentPosition.value = currentPos
+        this.allPositions.value?.add(currentPos)
     }
 
     fun getCurrentPosition():LiveData<LatLng>{
@@ -47,6 +50,10 @@ class WorkoutsViewModel(application: Application):AndroidViewModel(application) 
 
     fun getDistance():LiveData<Double>{
         return this.distance
+    }
+
+    fun getAllPositions():LiveData<ArrayList<LatLng>>{
+        return this.allPositions
     }
 
 }
