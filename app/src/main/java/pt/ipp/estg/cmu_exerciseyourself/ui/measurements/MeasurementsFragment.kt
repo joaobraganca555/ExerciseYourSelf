@@ -70,7 +70,7 @@ class MeasurementsFragment : Fragment() {
             binding.belly.text = it?.belly.toString() + cm
             binding.chest.text = it?.chest.toString() + cm
             binding.height.text = it?.height.toString() + cm
-            binding.weight.text = it?.weight.toString() + cm
+            binding.weight.text = it?.weight.toString() + " kg"
         }
 
         repository.getAllMeasurements().observe(viewLifecycleOwner) {
