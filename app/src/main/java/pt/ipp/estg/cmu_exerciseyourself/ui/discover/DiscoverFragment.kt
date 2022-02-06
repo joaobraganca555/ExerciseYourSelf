@@ -34,17 +34,17 @@ import retrofit2.Response
 class DiscoverFragment : Fragment() {
     private lateinit var myContext : Context
     private lateinit var refreshLocation : Button
+    private lateinit var oneKilometer : Button
+    private lateinit var fiveKilometer : Button
+    private lateinit var teenKilometer : Button
     private lateinit var findPlacesButton : ImageButton
-    private lateinit var mapFragment : SupportMapFragment
     private lateinit var radiusText : TextInputEditText
+    private lateinit var mapFragment : SupportMapFragment
     private lateinit var geopifyGeopifyResponseObject: GeopifyResponseObject
     private lateinit var mMap: GoogleMap
     private lateinit var lastLocation: LatLng
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    //private var locationHelper = LocationHelper()
-    //var currentLat:Double? = null
-    //var currentLong:Double? = null
-    //var isUpdatingLocation:Boolean = true
+    private val TAG = "DiscoverFragment"
 
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
@@ -59,7 +59,7 @@ class DiscoverFragment : Fragment() {
                 ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.d("asd", "SEM PERMISSOES")
+            Log.d(TAG, "SEM PERMISSOES")
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
             return@OnMapReadyCallback
         } else {
@@ -73,7 +73,7 @@ class DiscoverFragment : Fragment() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener(requireActivity()) { location ->
                 if (location != null) {
-                    Log.d("asd", "getLastKnownLocation== ${location} ")
+                    Log.d(TAG, "getLastKnownLocation == ${location} ")
                     lastLocation = LatLng(location.latitude, location.longitude)
                     mMap.clear()
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation,12f))
@@ -96,6 +96,9 @@ class DiscoverFragment : Fragment() {
         refreshLocation = view.findViewById(R.id.refreshLocation)
         findPlacesButton = view.findViewById(R.id.findButton)
         radiusText = view.findViewById(R.id.radiusText)
+        oneKilometer = view.findViewById(R.id.oneKilometer)
+        fiveKilometer = view.findViewById(R.id.fiveKilometer)
+        teenKilometer = view.findViewById(R.id.teenKilometer)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
 
@@ -121,7 +124,7 @@ class DiscoverFragment : Fragment() {
                 responseCallback.enqueue(object: retrofit2.Callback<GeopifyResponseObject> {
 
                     override fun onResponse(call: Call<GeopifyResponseObject>, geopifyResponse: Response<GeopifyResponseObject>) {
-                        if(geopifyResponse.code() === 200){
+                        if(geopifyResponse.code() == 200){
                             Log.d("asd", geopifyResponse.body().toString())
                             geopifyGeopifyResponseObject = geopifyResponse.body() as GeopifyResponseObject
                             loadMarkers(geopifyGeopifyResponseObject)
@@ -134,10 +137,24 @@ class DiscoverFragment : Fragment() {
                         Toast.makeText(myContext,t.message.toString(), Toast.LENGTH_LONG).show()
                     }
                 })
-            } else {
-                Toast.makeText(myContext,"O raio não pode ser 0 nem ultrapassar 20km!", Toast.LENGTH_LONG).show()
+            }else {
+                 Toast.makeText(myContext,"O raio não pode ser 0 nem ultrapassar 20km!", Toast.LENGTH_LONG).show()
             }
         }
+
+        oneKilometer.setOnClickListener {
+            getPlacesWithCertainRadius(1000)
+        }
+
+        fiveKilometer.setOnClickListener {
+            getPlacesWithCertainRadius(5000)
+        }
+
+        teenKilometer.setOnClickListener {
+            getPlacesWithCertainRadius(10000)
+        }
+
+
         return view
     }
 
@@ -162,7 +179,7 @@ class DiscoverFragment : Fragment() {
             val position = LatLng(local.properties!!.lat!!, local.properties!!.lon!!)
             var info = "Fitness: "
             info += "${local.properties!!.formatted}"
-            Log.d("asd", "tentou adicionar marker")
+            Log.d(TAG, "loadMarkers: Adicinou novo marker!")
             mMap.addMarker(
                 MarkerOptions()
                     .position(position)
@@ -173,74 +190,27 @@ class DiscoverFragment : Fragment() {
         }
     }
 
-    /*
-    private fun getLastKnownLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                myContext,
-                ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                myContext,
-                ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("asd", "SEM PERMISSOES")
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
-            mapFragment.getMapAsync(callback)
-            return
-        } else {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        Log.d("asd", "getLastKnownLocation== ${location} ")
-                        lastLocation = LatLng(location?.latitude!!, location.longitude)
-                        mMap!!.clear()
-                        mMap!!.addMarker(
-                            MarkerOptions()
-                                .position(lastLocation)
-                                .title("Eu")
-                        ).showInfoWindow()
-                        mMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation,12f))
+
+    private fun getPlacesWithCertainRadius(radius: Int) {
+            mMap.clear()
+            var filter = "circle:${lastLocation.longitude},${lastLocation.latitude},${radius}"
+            val bias = "proximity:${lastLocation.longitude},${lastLocation.latitude}"
+            val retrofitClient = IGeopify.getApi()
+            val responseCallback = retrofitClient.findPlaces(filter, bias)
+            responseCallback.enqueue(object: retrofit2.Callback<GeopifyResponseObject> {
+                override fun onResponse(call: Call<GeopifyResponseObject>, geopifyResponse: Response<GeopifyResponseObject>) {
+                    if(geopifyResponse.code() == 200){
+                        Log.d(TAG, geopifyResponse.body().toString())
+                        geopifyGeopifyResponseObject = geopifyResponse.body() as GeopifyResponseObject
+                        loadMarkers(geopifyGeopifyResponseObject)
+                    } else{
+                        Toast.makeText(myContext,"Aconteceu um erro! Por favor verifique se tem internet!", Toast.LENGTH_LONG).show()
                     }
                 }
-            /*
-           locationHelper.startListeningUserLocation(
-            myContext, object : MyLocationListener {
-                override fun onLocationChanged(location: Location?) {
-                    var mLocation = location
-                    currentLat = mLocation?.latitude
-                    currentLong = mLocation?.longitude
 
-                    if(currentLat != null && currentLong!=null){
-                        actualLocation = LatLng(location?.latitude!!, location.longitude)
-                        googleMap!!.clear()
-                        googleMap!!.addMarker(
-                            MarkerOptions()
-                                .position(actualLocation)
-                                .title("Eu")
-                        ).showInfoWindow()
-                        googleMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(actualLocation,12f))
-                    }
-
+                override fun onFailure(call: Call<GeopifyResponseObject>, t: Throwable) {
+                    Toast.makeText(myContext,t.message.toString(), Toast.LENGTH_LONG).show()
                 }
-            })*/
-        }
+            })
     }
-
-    override fun onStop() {
-        super.onStop()
-        locationHelper.stopUpdates()
-        isUpdatingLocation = false
-    }
-
-    override fun onPause() {
-        super.onPause()
-        locationHelper.stopUpdates()
-        isUpdatingLocation = false
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        locationHelper.stopUpdates()
-        isUpdatingLocation = false
-    }*/
 }
