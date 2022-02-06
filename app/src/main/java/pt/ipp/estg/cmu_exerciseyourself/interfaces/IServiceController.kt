@@ -7,4 +7,5 @@ interface IServiceController {
     fun stopAutomaticExercise()
     fun openAddActivity()
     fun openExerciseView()
+    fun openMeasurementView()
 }
