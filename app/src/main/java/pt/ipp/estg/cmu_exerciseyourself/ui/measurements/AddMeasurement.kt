@@ -82,6 +82,7 @@ class AddMeasurement : Fragment() {
                 Executors.newFixedThreadPool(1).execute{
                     repository.insertMeasurement(newMeasurement)
                 }
+                myContext.openMeasurementView()
             }catch (e:NumberFormatException){
                 Toast.makeText(context, "Campos inválidos", Toast.LENGTH_SHORT).show()
             }
