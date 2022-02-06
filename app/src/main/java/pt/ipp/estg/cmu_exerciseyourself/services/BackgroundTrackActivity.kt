@@ -101,6 +101,8 @@ class BackgroundTrackActivity : Service() {
                         i.putExtra("lat", currentLat)
                         i.putExtra("long", currentLong)
 
+
+
                         val distance = BigDecimal(totalDistance).setScale(2, RoundingMode.HALF_EVEN)
                         i.putExtra("distance", distance.toDouble())
 

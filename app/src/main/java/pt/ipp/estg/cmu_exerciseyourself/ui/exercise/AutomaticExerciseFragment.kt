@@ -46,10 +46,9 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
     private val binding get() = _binding!!
     var db = FirebaseFirestore.getInstance()
     private lateinit var myContext: IServiceController
-    lateinit var supportMapFragment: SupportMapFragment
     lateinit var workoutViewModel: WorkoutsViewModel
-    val current = LatLng(37.129665, -8.669586)
-    var marker = MarkerOptions().position(LatLng(37.129665, -8.669586))
+    val current = LatLng(41.36683124768688, -8.19474151019716)
+    var marker = MarkerOptions().position(LatLng(41.36683124768688, -8.19474151019716))
     var workoutWithCoord: WorkoutWithCoord? = null
 
     var listCoordinates = ArrayList<Coordinates>()
@@ -212,6 +211,22 @@ class AutomaticExerciseFragment : Fragment(), OnMapReadyCallback, SensorEventLis
             val sec = ChronoUnit.SECONDS.between(beginDate, LocalDateTime.now()).toInt()
 
             startTimer(sec)
+
+            var allPositions = workoutViewModel.getAllPositions().value
+
+            if (allPositions != null) {
+                for(i in allPositions){
+                    var coord = Coordinates(i.latitude, i.longitude, null, null)
+                    listCoordinates.add(coord)
+                }
+            }
+
+            if (allPositions != null) {
+                for (i in allPositions){
+                    polyOptions.add(i)
+                }
+                googlemap?.addPolyline(polyOptions)
+            }
         }
     }
 
