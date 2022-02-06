@@ -29,6 +29,8 @@ import pt.ipp.estg.cmu_exerciseyourself.utils.SportsAdapter
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import retrofit2.Call
 import retrofit2.Response
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -40,7 +42,6 @@ import kotlin.collections.ArrayList
 const val KELVIN = 273.15
 
 class AddManualExercise : Fragment(),ComunicationSportFragment {
-    lateinit var txtMinTemp:TextView
     lateinit var txtMaxTemp:TextView
     lateinit var txtHumidade:TextView
     var sportActivity:Sport = Sport.RUNNING_OUTDOOR
@@ -80,7 +81,6 @@ class AddManualExercise : Fragment(),ComunicationSportFragment {
         val beginDateImage = view.findViewById<ImageView>(R.id.beginDateImageButton)
         //View Forecast
         txtMaxTemp = view.findViewById(R.id.txtTempMax)
-        txtMinTemp = view.findViewById(R.id.txtTempMin)
         txtHumidade = view.findViewById(R.id.txtHumidade)
         imgWeather = view.findViewById(R.id.imgWeather)
         forecastView = view.findViewById(R.id.viewForecast)
@@ -193,10 +193,13 @@ class AddManualExercise : Fragment(),ComunicationSportFragment {
     }
 
     private fun populateUIForecast(){
-        this.txtMinTemp.text = "Temp Min:" + (this.forecastForDate?.get(0)?.main?.tempMin?.minus(KELVIN)).toString() + " ºC"
-        this.txtMaxTemp.text = "Temp Max:" + (this.forecastForDate?.get(0)?.main?.tempMax?.minus(KELVIN)).toString() + " ºC"
-        this.txtHumidade.text = "Humidade:" + this.forecastForDate?.get(0)?.main?.humidity.toString()
-        val resourceID:Int = when(this.forecastForDate?.get(0)?.weather?.get(0)?.main){
+
+        val tempMax = BigDecimal((this.forecastForDate?.get(4)?.main?.tempMax?.minus(KELVIN)!!)).setScale(2, RoundingMode.HALF_EVEN)
+        this.txtMaxTemp.text = "Temp: " + tempMax.toString() + " ºC"
+
+        this.txtHumidade.text = "Humidade: " + this.forecastForDate?.get(4)?.main?.humidity.toString()
+
+        val resourceID:Int = when(this.forecastForDate?.get(4)?.weather?.get(0)?.main){
             "Clouds" -> {
                 R.drawable.ic_clouds
             }

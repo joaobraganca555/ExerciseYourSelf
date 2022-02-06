@@ -232,14 +232,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtTempMin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12ºC"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-                    <TextView
                         android:id="@+id/txtTempMax"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
