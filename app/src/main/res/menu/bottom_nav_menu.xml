@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_health"
-        android:icon="@drawable/ic_health"
-        android:title="Saúde" />
+        android:icon="@drawable/ic_home"
+        android:title="Inicío" />
     <item
         android:id="@+id/navigation_discover"
         android:icon="@drawable/ic_discover"
-        android:title="Descobrir ginásios"/>
+        android:title="Descobrir"/>
 
     <item
         android:id="@+id/id_placeholder"

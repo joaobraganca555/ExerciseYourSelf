@@ -7,12 +7,12 @@
     <fragment
         android:id="@+id/navigation_health"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.health.HealthFragment"
-        android:label="@string/title_health"
+        android:label="Inicío"
         tools:layout="@layout/fragment_health" />
     <fragment
         android:id="@+id/navigation_exercise"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ExerciseFragment"
-        android:label="@string/title_exercise"
+        android:label="Exercicío"
         tools:layout="@layout/fragment_manual_exercise" />
     <fragment
         android:id="@+id/navigation_discover"
@@ -37,7 +37,7 @@
     <fragment
         android:id="@+id/navigation_userProfile"
         android:name="pt.ipp.estg.cmu_exerciseyourself.ui.profile.ProfileFragment"
-        android:label="Definições"
+        android:label="Meu perfil"
         tools:layout="@layout/fragment_profile"/>
 
     <fragment

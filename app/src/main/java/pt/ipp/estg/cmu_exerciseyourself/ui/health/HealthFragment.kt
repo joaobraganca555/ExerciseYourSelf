@@ -97,16 +97,6 @@ class HealthFragment : Fragment(),SensorEventListener {
         repository.getCurrentMeasurement().observe(viewLifecycleOwner){
             binding.weight.text = it?.weight.toString()
             binding.height.text = it?.height.toString()
-
-            val w = it?.weight
-            val h = it?.height
-
-            val imc = h?.times(h)?.let { it1 -> w?.div(it1) }
-
-            Log.d("IMC", it?.weight.toString())
-            Log.d("IMC", it?.height.toString())
-            Log.d("IMC", "imc : " + imc.toString() )
-
             binding.imc.text = (it?.weight?.div((it?.height).div(100)*(it?.height).div(100))
                 ?.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN).toString() })
         }
