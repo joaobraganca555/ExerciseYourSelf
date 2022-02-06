@@ -11,6 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
@@ -22,6 +25,7 @@ import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
+import pt.ipp.estg.cmu_exerciseyourself.utils.SportsAdapter
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
 import retrofit2.Call
 import retrofit2.Response
@@ -43,6 +47,9 @@ class AddManualExercise : Fragment() {
     lateinit var forecastView:View
     var forecastForDate:List<ListDays> = ArrayList<ListDays>()
     lateinit var repository: FitnessRepository
+    lateinit var recViewChoices:RecyclerView
+    var listSports = ArrayList<String>(ArrayList(
+        Arrays.asList("RUNNING_OUTDOOR", "WALKING", "GYM", "HOME_TRAINING", "OTHER")))
     lateinit var txtBeginDate: TextInputEditText
     lateinit var txtDistance: TextInputEditText
     lateinit var txtCal: TextInputEditText
@@ -77,12 +84,19 @@ class AddManualExercise : Fragment() {
         imgWeather = view.findViewById(R.id.imgWeather)
         forecastView = view.findViewById(R.id.viewForecast)
         txtPlaces = view.findViewById(R.id.txtPlace)
+        recViewChoices = view.findViewById(R.id.recViewSportChoices)
+        val sportsAdapter = SportsAdapter(listSports)
+        recViewChoices.apply {
+            adapter = sportsAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        }
         txtBeginDate = view.findViewById(R.id.dateText)
         txtDistance = view.findViewById(R.id.txtDistance)
         txtCal = view.findViewById(R.id.txtCal)
         txtDuration = view.findViewById(R.id.txtDuration)
         txtFootSteps = view.findViewById(R.id.txtNumFootsteps)
         checkBoxSchedule = view.findViewById(R.id.checkbox_schedule)
+
 
         checkBoxSchedule.setOnClickListener {
             if (this.activityAction.equals("Agendar_Treino")) {
@@ -91,9 +105,6 @@ class AddManualExercise : Fragment() {
                 updateUI(false)
             } else {
                 this.activityAction = "Agendar_Treino"
-                Log.d("asd", "date===$beginDateActivity")
-                Log.d("asd", "diff=" + ChronoUnit.DAYS.between(LocalDateTime.now(),beginDateActivity).toString())
-
                 if(!txtBeginDate.text.isNullOrEmpty() && !txtPlaces.text.isNullOrEmpty()
                     && beginDateActivity!!.isAfter(LocalDateTime.now()) &&
                     ChronoUnit.DAYS.between(LocalDateTime.now(),beginDateActivity) <= 5){
