@@ -125,7 +125,7 @@ class ProfileFragment : Fragment() {
         val storageRef = storage.getReference()
         var islandRef = storageRef.child("images/${userAuth.currentUser!!.uid}.jpg")
 
-        val ONE_MEGABYTE: Long = 1024 * 1024
+        val ONE_MEGABYTE: Long = 20480 * 20480
         islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
             // Data for "images/island.jpg" is returned, use this as needed
             Log.d(TAG, "getImage: Imagem descarregada!")
@@ -135,6 +135,7 @@ class ProfileFragment : Fragment() {
         }.addOnFailureListener {
             // Handle any errors
             Log.d(TAG, "getImage: Erro ao descarregar imagem!")
+            Toast.makeText(myContext, "Erro ao descarregar imagem! Tamanho elevado!", Toast.LENGTH_LONG).show()
         }
         return result
     }
