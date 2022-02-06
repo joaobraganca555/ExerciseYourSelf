@@ -10,6 +10,8 @@
 
     <color name="gray_100">#CED6DF</color>
     <color name="gray_200">#BABEC3</color>
+    <color name="gray_300">#A7A7A8</color>
+    <color name="gray_400">#7A7A7A</color>
     <color name="blue_100">#248ED8</color>
     <color name="blue_200">#0050C4</color>
 </resources>

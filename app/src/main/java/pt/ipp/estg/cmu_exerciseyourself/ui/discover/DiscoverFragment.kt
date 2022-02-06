@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -33,12 +34,10 @@ import retrofit2.Response
 
 class DiscoverFragment : Fragment() {
     private lateinit var myContext : Context
-    private lateinit var refreshLocation : Button
+    private lateinit var refreshLocation : ImageView
     private lateinit var oneKilometer : Button
     private lateinit var fiveKilometer : Button
     private lateinit var teenKilometer : Button
-    private lateinit var findPlacesButton : ImageButton
-    private lateinit var radiusText : TextInputEditText
     private lateinit var mapFragment : SupportMapFragment
     private lateinit var geopifyGeopifyResponseObject: GeopifyResponseObject
     private lateinit var mMap: GoogleMap
@@ -77,6 +76,14 @@ class DiscoverFragment : Fragment() {
                     lastLocation = LatLng(location.latitude, location.longitude)
                     mMap.clear()
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation,12f))
+                    oneKilometer.isEnabled = true
+                    fiveKilometer.isEnabled = true
+                    teenKilometer.isEnabled = true
+                } else {
+                        oneKilometer.isEnabled = false
+                        fiveKilometer.isEnabled = false
+                        teenKilometer.isEnabled = false
+                    Toast.makeText(myContext, "Por favor, ative a localização!", Toast.LENGTH_LONG).show()
                 }
             }
     }
@@ -94,8 +101,6 @@ class DiscoverFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_discover, container, false)
 
         refreshLocation = view.findViewById(R.id.refreshLocation)
-        findPlacesButton = view.findViewById(R.id.findButton)
-        radiusText = view.findViewById(R.id.radiusText)
         oneKilometer = view.findViewById(R.id.oneKilometer)
         fiveKilometer = view.findViewById(R.id.fiveKilometer)
         teenKilometer = view.findViewById(R.id.teenKilometer)
@@ -106,9 +111,9 @@ class DiscoverFragment : Fragment() {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(myContext)
             mapFragment = (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
             mapFragment.getMapAsync(callback)
-            //setUpMap()
         }
 
+        /*
         findPlacesButton.setOnClickListener {
             val radius = radiusText.text.toString()
             if (radius.isNullOrEmpty()) {
@@ -140,7 +145,7 @@ class DiscoverFragment : Fragment() {
             }else {
                  Toast.makeText(myContext,"O raio não pode ser 0 nem ultrapassar 20km!", Toast.LENGTH_LONG).show()
             }
-        }
+        }*/
 
         oneKilometer.setOnClickListener {
             getPlacesWithCertainRadius(1000)
@@ -166,14 +171,6 @@ class DiscoverFragment : Fragment() {
 
     private fun loadMarkers(obj: GeopifyResponseObject) {
         val locals = obj.features
-
-        //Adicionar o ponto onde a pessoa se encontra
-        /*
-        mMap.addMarker(
-            MarkerOptions()
-            .position(lastLocation)
-            .title("Eu")).showInfoWindow()
-         */
 
         for (local in locals) {
             val position = LatLng(local.properties!!.lat!!, local.properties!!.lon!!)

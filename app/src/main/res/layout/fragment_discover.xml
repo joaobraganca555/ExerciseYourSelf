@@ -1,56 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parent">
-
-    <LinearLayout
-        android:id="@+id/input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:gravity="end">
-
-         <ImageButton
-            android:id="@+id/findButton"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_baseline_search_20"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/filledTextField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="Raio (km)">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/radiusText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-        <Button
-            android:id="@+id/refreshLocation"
-            android:layout_width="110dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="5dp"
-            android:backgroundTint="@color/gray_200"
-            android:text="Atualizar Localização"
-            android:textSize="10dp"
-            app:srcCompat="@drawable/ic_baseline_refresh_24"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -60,39 +13,61 @@
         android:layout_centerInParent="true"
         android:layout_alignParentEnd="true">
 
-        <Button
+        <ImageView
+            android:id="@+id/refreshLocation"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_button"
+            android:src="@drawable/ic_baseline_refresh_24" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/oneKilometer"
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="20dp"
+            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+            app:cornerRadius="25dp"
+            android:layout_width="73dp"
+            android:layout_height="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:textStyle="italic"
             android:backgroundTint="@color/gray_200"
-            android:text="1 Km"
-            android:textSize="15dp" />
+            android:text="@string/_1_km" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/fiveKilometer"
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_below="@+id/oneKilometer"
+            android:layout_gravity="end"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/gray_200"
-            android:text="5 Km"
-            android:textSize="15dp" />
+            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+            app:cornerRadius="25dp"
+            android:layout_width="73dp"
+            android:layout_height="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:textStyle="italic"
+            android:backgroundTint="@color/gray_300"
+            android:text="@string/_5_km" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/teenKilometer"
-            android:layout_width="82dp"
-            android:layout_gravity="right"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/gray_200"
+            android:layout_gravity="end"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="20dp"
-            android:text="10 Km"
-            android:textSize="15dp" />
+            android:layout_marginBottom="5dp"
+            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+            app:cornerRadius="25dp"
+            android:layout_width="82dp"
+            android:layout_height="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:textStyle="italic"
+            android:backgroundTint="@color/gray_400"
+            android:text="@string/_10_km" />
      </LinearLayout>
 
 
@@ -100,10 +75,8 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@+id/spacer"
-        android:layout_below="@id/input"
-        android:layout_marginTop="5dp" />
+        android:layout_height="match_parent"
+        android:layout_above="@+id/spacer"/>
 
     <TextView
         android:id="@+id/spacer"

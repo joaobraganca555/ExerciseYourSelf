@@ -18,4 +18,8 @@
     <string name="password_min_6_characters">Minímo 6 caracteres</string>
     <string name="raio_metros">Raio (metros)</string>
     <string name="guardar_alteracoes">Guardar Alterações</string>
+    <string name="atualizar_localizacao">Atualizar Localização</string>
+    <string name="_1_km">1 km</string>
+    <string name="_5_km">5 km</string>
+    <string name="_10_km">10 km</string>
 </resources>
