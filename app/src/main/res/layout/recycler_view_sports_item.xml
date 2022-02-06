@@ -4,9 +4,11 @@
     android:layout_height="wrap_content"
     android:padding="10dp"
     android:layout_margin="10dp">
+
     <LinearLayout
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:id="@+id/linearLayout"
+        android:layout_width="90dp"
+        android:layout_height="95dp"
         android:orientation="vertical">
         <ImageView
             android:id="@+id/imgSportChoice"
@@ -16,8 +18,9 @@
         <TextView
             android:id="@+id/txtSportChoice"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:gravity="center"
             android:text="sport"/>
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

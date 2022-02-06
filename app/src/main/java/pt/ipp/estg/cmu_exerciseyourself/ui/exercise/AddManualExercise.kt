@@ -45,7 +45,7 @@ class AddManualExercise : Fragment() {
     lateinit var txtHumidade:TextView
     lateinit var imgWeather:ImageView
     lateinit var forecastView:View
-    var forecastForDate:List<ListDays> = ArrayList<ListDays>()
+    var forecastForDate:List<ListDays> = ArrayList()
     lateinit var repository: FitnessRepository
     lateinit var recViewChoices:RecyclerView
     var listSports = ArrayList<String>(ArrayList(
@@ -85,7 +85,7 @@ class AddManualExercise : Fragment() {
         forecastView = view.findViewById(R.id.viewForecast)
         txtPlaces = view.findViewById(R.id.txtPlace)
         recViewChoices = view.findViewById(R.id.recViewSportChoices)
-        val sportsAdapter = SportsAdapter(listSports)
+        val sportsAdapter = SportsAdapter(listSports, myContext)
         recViewChoices.apply {
             adapter = sportsAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
