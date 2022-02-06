@@ -39,10 +39,11 @@ import kotlin.collections.ArrayList
 
 const val KELVIN = 273.15
 
-class AddManualExercise : Fragment() {
+class AddManualExercise : Fragment(),ComunicationSportFragment {
     lateinit var txtMinTemp:TextView
     lateinit var txtMaxTemp:TextView
     lateinit var txtHumidade:TextView
+    var sportActivity:Sport = Sport.RUNNING_OUTDOOR
     lateinit var imgWeather:ImageView
     lateinit var forecastView:View
     var forecastForDate:List<ListDays> = ArrayList()
@@ -85,7 +86,7 @@ class AddManualExercise : Fragment() {
         forecastView = view.findViewById(R.id.viewForecast)
         txtPlaces = view.findViewById(R.id.txtPlace)
         recViewChoices = view.findViewById(R.id.recViewSportChoices)
-        val sportsAdapter = SportsAdapter(listSports, myContext)
+        val sportsAdapter = SportsAdapter(listSports, myContext,this)
         recViewChoices.apply {
             adapter = sportsAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -246,7 +247,7 @@ class AddManualExercise : Fragment() {
         } else {
             Executors.newFixedThreadPool(1).execute {
                 val workout = Workouts(
-                    sport = Sport.RUNNING_OUTDOOR.toString(),
+                    sport = sportActivity.toString(),
                     status = status,
                     distance = distance,
                     duration = duration.toString(),
@@ -266,4 +267,13 @@ class AddManualExercise : Fragment() {
             (myContext as IServiceController).openExerciseView()
         }
     }
+
+    override fun updateSport(sport:Sport) {
+        this.sportActivity = sport
+        Log.d("asd", "updateSport = $sport")
+    }
+}
+
+interface ComunicationSportFragment{
+    fun updateSport(sport:Sport)
 }

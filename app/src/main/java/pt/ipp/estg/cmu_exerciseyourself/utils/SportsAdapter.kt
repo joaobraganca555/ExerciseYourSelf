@@ -12,8 +12,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import pt.ipp.estg.cmu_exerciseyourself.R
+import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.ComunicationSportFragment
 
-class SportsAdapter(var listSports:List<String>, var context: Context): RecyclerView.Adapter<SportsAdapter.MyViewholder>() {
+class SportsAdapter(var listSports:List<String>, var context: Context,var hostFragment:ComunicationSportFragment): RecyclerView.Adapter<SportsAdapter.MyViewholder>() {
     var selectedItemPos = RecyclerView.NO_POSITION
     var lastItemSelectedPos = RecyclerView.NO_POSITION
 
@@ -83,6 +84,16 @@ class SportsAdapter(var listSports:List<String>, var context: Context): Recycler
             linearLayout = itemView.findViewById(R.id.linearLayout)
 
             itemView.setOnClickListener {
+                var choice:Sport = when(txtSport.text.toString()){
+                    "Corrida" -> Sport.RUNNING_OUTDOOR
+                    "Caminhada" -> Sport.WALKING
+                    "Ginásio" -> Sport.GYM
+                    "Treino em Casa" -> Sport.HOME_TRAINING
+                    "Outro Treino" -> Sport.OTHER
+                    else -> Sport.OTHER
+                }
+
+                (hostFragment as ComunicationSportFragment).updateSport(choice)
                 selectedItemPos = adapterPosition
                 if(lastItemSelectedPos == RecyclerView.NO_POSITION)
                     lastItemSelectedPos = selectedItemPos
