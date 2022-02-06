@@ -14,37 +14,36 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.AutomaticExerciseFragment
-import pt.ipp.estg.cmu_exerciseyourself.ui.exercise.WorkoutsViewModel
 import pt.ipp.estg.cmu_exerciseyourself.utils.LocationHelper
 import pt.ipp.estg.cmu_exerciseyourself.utils.MyLocationListener
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
+import kotlin.math.acos
+import kotlin.math.cos
+import kotlin.math.sin
 
 //Fused Location API Google Play Services
-class BackgroundTrackActivity: Service() {
-    val binder = MyBinder()
+class BackgroundTrackActivity : Service() {
+    private val binder = MyBinder()
     private var locationHelper = LocationHelper()
-    private var previousLat:Double? = null
-    private var previousLong:Double? = null
-    private var totalDistance:Double = 0.0
-    private var totalDuration:Long = 0
-    lateinit var currentDuration:String
+    private var previousLat: Double? = null
+    private var previousLong: Double? = null
+    private var totalDistance: Double = 0.0
+    private var totalDuration: Long = 0
     private var beginDate: LocalDateTime? = null
-    private lateinit var workoutViewModel:WorkoutsViewModel
 
-    val broadReceiver = object: BroadcastReceiver(){
+    private val broadReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.N)
         override fun onReceive(context: Context?, intent: Intent?) {
             stopServiceForeGround()
         }
     }
 
-    companion object{
-        val ONGOING_NOTIFICATION_ID = 12
-        val CHANNEL_ID="channel1"
+    companion object {
+        const val ONGOING_NOTIFICATION_ID = 12
+        const val CHANNEL_ID = "channel1"
         var mLocation: Location? = null
     }
 
@@ -54,32 +53,31 @@ class BackgroundTrackActivity: Service() {
 
         val intentFilter = IntentFilter()
         intentFilter.addAction("pt.ipp.estg.sensorapp.src.MainActivity")
-        registerReceiver(broadReceiver,intentFilter)
+        registerReceiver(broadReceiver, intentFilter)
 
         createNotificationChannel()
 
         //Build a notification for foreground service
         val pendingIntent: PendingIntent = Intent(this, AutomaticExerciseFragment::class.java).let {
-            PendingIntent.getActivity(this,0,it,0)
+            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
         }
 
         val notification: Notification = Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("Foreground Service")
-            .setContentText("Exercicio a decorrer")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle("Just Do It")
+            .setContentText("Exercicío a decorrer")
+            .setSmallIcon(R.mipmap.ic_launcher_running)
             .setContentIntent(pendingIntent)
             .build()
 
-        startForeground(ONGOING_NOTIFICATION_ID,notification)
+        startForeground(ONGOING_NOTIFICATION_ID, notification)
     }
 
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val timer = Timer()
 
-        var currentLat:Double?
-        var currentLong:Double?
+        var currentLat: Double?
+        var currentLong: Double?
         locationHelper.startListeningUserLocation(
             this, object : MyLocationListener {
                 override fun onLocationChanged(location: Location?) {
@@ -87,16 +85,21 @@ class BackgroundTrackActivity: Service() {
                     currentLat = mLocation?.latitude
                     currentLong = mLocation?.longitude
 
-                    if(currentLat != null && currentLong!=null){
+                    if (currentLat != null && currentLong != null) {
                         //If was not the first coordinate
-                        if(previousLat != null && previousLong != null){
-                            totalDistance += calculateDistance(previousLat!!,previousLong!!,currentLat!!,currentLong!!)
+                        if (previousLat != null && previousLong != null) {
+                            totalDistance += calculateDistance(
+                                previousLat!!,
+                                previousLong!!,
+                                currentLat!!,
+                                currentLong!!
+                            )
                         }
                         previousLat = currentLat
                         previousLong = currentLong
                         val i = Intent("pt.ipp.estg.sensorapp.src.BackgroundDetectActivities")
-                        i.putExtra("lat",currentLat)
-                        i.putExtra("long",currentLong)
+                        i.putExtra("lat", currentLat)
+                        i.putExtra("long", currentLong)
 
                         val distance = BigDecimal(totalDistance).setScale(2, RoundingMode.HALF_EVEN)
                         i.putExtra("distance", distance.toDouble())
@@ -104,12 +107,13 @@ class BackgroundTrackActivity: Service() {
                         sendBroadcast(i)
                     }
                     mLocation?.let {
-                        Log.d("asd", "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance")
-                        //Toast.makeText(baseContext, totalDistance.toString(), Toast.LENGTH_SHORT).show()
+                        Log.d(
+                            "asd",
+                            "lat = ${it.latitude} e long = ${it.longitude} e alt = ${it.altitude} e dist = $totalDistance"
+                        )
                     }
                 }
             })
-
         //Set exercise begin date
         beginDate = LocalDateTime.now()
         return START_STICKY
@@ -119,7 +123,7 @@ class BackgroundTrackActivity: Service() {
         return this.binder
     }
 
-    fun createNotificationChannel(){
+    private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val descriptionText = "Service notification for foreground application"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -151,13 +155,16 @@ class BackgroundTrackActivity: Service() {
 
     }
 
-    private fun calculateDistance(lat1:Double,lon1:Double,lat2:Double,lon2:Double):Double{
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val theta = lon1 - lon2
-        var dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta))
-        dist = Math.acos(dist)
+        var dist =
+            sin(deg2rad(lat1)) * sin(deg2rad(lat2)) + cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * cos(
+                deg2rad(theta)
+            )
+        dist = acos(dist)
         dist = rad2deg(dist)
-        dist = dist * 60 * 1.1515
-        dist = dist * 1.609344
+        dist *= 60 * 1.1515
+        dist *= 1.609344
         return dist
     }
 
@@ -169,7 +176,7 @@ class BackgroundTrackActivity: Service() {
         return rad * 180.0 / Math.PI
     }
 
-    inner class MyBinder: Binder(){
-        fun getService():BackgroundTrackActivity = this@BackgroundTrackActivity
+    inner class MyBinder : Binder() {
+        fun getService(): BackgroundTrackActivity = this@BackgroundTrackActivity
     }
 }

@@ -41,8 +41,16 @@ class ChallengesAdapter(var listChallenges:List<Workouts>): RecyclerView.Adapter
                 holder.txtSport.text = "Caminhada"
             }
             Sport.GYM.toString() ->{
-                holder.imgSport.setImageResource(R.drawable.ic_baseline_walking)
+                holder.imgSport.setImageResource(R.drawable.ic_supino)
                 holder.txtSport.text = "Ginásio"
+            }
+            Sport.HOME_TRAINING.toString() ->{
+                holder.imgSport.setImageResource(R.drawable.ic_baseline_self_improvement_24)
+                holder.txtSport.text = "Treino em Casa"
+            }
+            Sport.OTHER.toString() ->{
+                holder.imgSport.setImageResource(R.drawable.ic_baseline_hiking_24)
+                holder.txtSport.text = "Outro Treino"
             }
         }
     }

@@ -40,7 +40,7 @@
                 android:textSize="25sp"
                 android:layout_gravity="center"
                 android:textColor="#3D5270"
-                android:text="3213"
+                android:text="0"
                 android:layout_margin="10dp"/>
             <TextView
                 android:id="@+id/txtLabelSteps"
@@ -87,7 +87,7 @@
                 android:textSize="25sp"
                 android:layout_gravity="center"
                 android:textColor="#3D5270"
-                android:text="3213"
+                android:text="0"
                 android:layout_margin="10dp"/>
             <TextView
                 android:id="@+id/txtLabelCal"
@@ -131,6 +131,7 @@
                 android:layout_gravity="left">
 
                 <TextView
+                    android:id="@+id/weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="77"
@@ -156,6 +157,7 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/height"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1.80"
@@ -183,6 +185,7 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/imc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="21"

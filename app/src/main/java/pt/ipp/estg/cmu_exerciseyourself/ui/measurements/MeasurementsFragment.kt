@@ -1,5 +1,6 @@
 package pt.ipp.estg.cmu_exerciseyourself.ui.measurements
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -30,23 +31,17 @@ class MeasurementsFragment : Fragment() {
 
     private var _binding: FragmentMeasurementsBinding? = null
     private val binding get() = _binding!!
-
     lateinit var addMeasurementBtn: ImageView
-
     lateinit var repository: FitnessRepository
-
     private lateinit var navController: NavController
-
-    var totalMeasurements:List<Measurements>? = null
-
+    var totalMeasurements: List<Measurements>? = null
     private var chartWeight: LineChart? = null
     private var chartFat: LineChart? = null
-
-    private var weightEntries:ArrayList<Entry>? = null
-    private var fatEntries:ArrayList<Entry>? = null
-
+    private var weightEntries: ArrayList<Entry>? = null
+    private var fatEntries: ArrayList<Entry>? = null
     lateinit var hostActivity: IServiceController
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +65,7 @@ class MeasurementsFragment : Fragment() {
         chartWeight = root.findViewById(R.id.lineChartWeight)
         chartFat = root.findViewById(R.id.lineChartFat)
 
-        repository.getCurrentMeasurement().observe(viewLifecycleOwner){
+        repository.getCurrentMeasurement().observe(viewLifecycleOwner) {
             val cm = " cm"
             binding.belly.text = it?.belly.toString() + cm
             binding.chest.text = it?.chest.toString() + cm
@@ -86,11 +81,11 @@ class MeasurementsFragment : Fragment() {
 
             var count = 0f
             var indexToRemove = 0
-            for (i in totalMeasurements!!){
+            for (i in totalMeasurements!!) {
                 weightEntries?.add(BarEntry(count, i.weight.toFloat()))
                 fatEntries?.add(BarEntry(count, i.percFat.toFloat()))
                 count++
-                if(count.toInt() > 10){
+                if (count.toInt() > 10) {
                     weightEntries?.removeAt(indexToRemove)
                     fatEntries?.removeAt(indexToRemove)
                 }
@@ -111,8 +106,8 @@ class MeasurementsFragment : Fragment() {
         return root
     }
 
-    private fun setupCharts(){
-        chartWeight?.let{
+    private fun setupCharts() {
+        chartWeight?.let {
             val xAxis: XAxis = it.xAxis
             xAxis.setCenterAxisLabels(true)
             xAxis.setDrawGridLines(false)
@@ -132,7 +127,7 @@ class MeasurementsFragment : Fragment() {
             it.animateY(2000)
             it.invalidate()
         }
-        chartFat?.let{
+        chartFat?.let {
             val xAxis: XAxis = it.xAxis
             xAxis.setCenterAxisLabels(true)
             xAxis.setDrawGridLines(false)
@@ -153,19 +148,6 @@ class MeasurementsFragment : Fragment() {
             it.invalidate()
         }
     }
-
-    /*
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getTotalDistanceByMonth(month:Int):Float?{
-        var workoutsByMonth = totalWorkouts?.filter {
-            LocalDateTime.parse(it.beginDate).month == Month.of(month)
-        }
-
-        var totalDistance = workoutsByMonth?.map { it.distance }?.sum()
-        return totalDistance?.toFloat()
-    }
-
-     */
 
     override fun onDestroyView() {
         super.onDestroyView()
