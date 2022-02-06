@@ -296,6 +296,11 @@ class MainActivity : AppCompatActivity(),IServiceController {
         Toast.makeText(baseContext,"Treino Registado com sucesso",Toast.LENGTH_LONG).show()
     }
 
+    override fun openMeasurementView() {
+        navController.navigate(R.id.navigation_measurements)
+        Toast.makeText(baseContext,"Medições atualizadas",Toast.LENGTH_LONG).show()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.navigation_measurements -> {
