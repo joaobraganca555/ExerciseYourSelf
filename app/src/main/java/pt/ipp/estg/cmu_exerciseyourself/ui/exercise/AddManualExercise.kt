@@ -2,7 +2,6 @@ package pt.ipp.estg.cmu_exerciseyourself.ui.exercise
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.media.Image
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,32 +14,46 @@ import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputEditText
 import pt.ipp.estg.cmu_exerciseyourself.R
 import pt.ipp.estg.cmu_exerciseyourself.interfaces.IServiceController
+import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.ListDays
+import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.OpenWeatherResponse
+import pt.ipp.estg.cmu_exerciseyourself.model.retrofit.OpenWeatherService
 import pt.ipp.estg.cmu_exerciseyourself.model.room.FitnessRepository
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Coordinates
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.WorkoutWithCoord
 import pt.ipp.estg.cmu_exerciseyourself.model.room.entities.Workouts
 import pt.ipp.estg.cmu_exerciseyourself.utils.Sport
 import pt.ipp.estg.cmu_exerciseyourself.utils.Status
-import java.lang.ClassCastException
+import retrofit2.Call
+import retrofit2.Response
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.collections.ArrayList
+
+const val KELVIN = 273.15
 
 class AddManualExercise : Fragment() {
+    lateinit var txtMinTemp:TextView
+    lateinit var txtMaxTemp:TextView
+    lateinit var txtHumidade:TextView
+    lateinit var imgWeather:ImageView
+    lateinit var forecastView:View
+    var forecastForDate:List<ListDays> = ArrayList<ListDays>()
     lateinit var repository: FitnessRepository
     lateinit var txtBeginDate: TextInputEditText
     lateinit var txtDistance: TextInputEditText
     lateinit var txtCal: TextInputEditText
+    lateinit var txtPlaces:TextInputEditText
     lateinit var txtDuration: TextInputEditText
     lateinit var txtFootSteps: TextInputEditText
     lateinit var myContext: Context
     lateinit var checkBoxSchedule: CheckBox
     var activityAction: String = "Registar_Treino"
     var beginDateActivity: LocalDateTime? = null
+    var forecast:OpenWeatherResponse? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,6 +70,13 @@ class AddManualExercise : Fragment() {
         repository = FitnessRepository(requireActivity().application)
 
         val beginDateImage = view.findViewById<ImageView>(R.id.beginDateImageButton)
+        //View Forecast
+        txtMaxTemp = view.findViewById(R.id.txtTempMax)
+        txtMinTemp = view.findViewById(R.id.txtTempMin)
+        txtHumidade = view.findViewById(R.id.txtHumidade)
+        imgWeather = view.findViewById(R.id.imgWeather)
+        forecastView = view.findViewById(R.id.viewForecast)
+        txtPlaces = view.findViewById(R.id.txtPlace)
         txtBeginDate = view.findViewById(R.id.dateText)
         txtDistance = view.findViewById(R.id.txtDistance)
         txtCal = view.findViewById(R.id.txtCal)
@@ -67,8 +87,18 @@ class AddManualExercise : Fragment() {
         checkBoxSchedule.setOnClickListener {
             if (this.activityAction.equals("Agendar_Treino")) {
                 this.activityAction = "Registar_Treino"
+                forecast = null
+                updateUI(false)
             } else {
                 this.activityAction = "Agendar_Treino"
+                Log.d("asd", "date===$beginDateActivity")
+                Log.d("asd", "diff=" + ChronoUnit.DAYS.between(LocalDateTime.now(),beginDateActivity).toString())
+
+                if(!txtBeginDate.text.isNullOrEmpty() && !txtPlaces.text.isNullOrEmpty()
+                    && beginDateActivity!!.isAfter(LocalDateTime.now()) &&
+                    ChronoUnit.DAYS.between(LocalDateTime.now(),beginDateActivity) <= 5){
+                    fetchForecast(txtPlaces.text.toString())
+                }
             }
         }
 
@@ -107,6 +137,72 @@ class AddManualExercise : Fragment() {
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         txtBeginDate.setText(sdf.format(myCalendar.time))
         beginDateActivity = LocalDateTime.ofInstant(myCalendar.time.toInstant(), ZoneId.systemDefault())
+    }
+
+    private fun fetchForecast(place:String){
+        Executors.newFixedThreadPool(1).execute {
+            OpenWeatherService.getApi().getForecast(place).enqueue(object: retrofit2.Callback<OpenWeatherResponse> {
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onResponse(call: Call<OpenWeatherResponse>, geopifyResponse: Response<OpenWeatherResponse>) {
+                    if(geopifyResponse.code() === 200){
+                        Log.d("asd", geopifyResponse.body().toString())
+                        var listResults:ArrayList<ListDays>? = null
+                        forecast = geopifyResponse.body() as OpenWeatherResponse
+                        forecast?.let {
+                            listResults = it.list
+                        }
+                        forecastForDate = listResults!!.filter {
+                            LocalDateTime.parse(it.dtTxt?.replace(" ","T")).dayOfMonth
+                                .equals(beginDateActivity?.dayOfMonth) &&
+                            LocalDateTime.parse(it.dtTxt?.replace(" ","T")).month
+                                .equals(beginDateActivity?.month) &&
+                            LocalDateTime.parse(it.dtTxt?.replace(" ","T")).year
+                                .equals(beginDateActivity?.year)
+                        }
+                        updateUI(true)
+                    } else{
+                        Log.d("asd", "something went wrong")
+                    }
+                }
+
+                override fun onFailure(call: Call<OpenWeatherResponse>, t: Throwable) {
+                    Log.d("asd", t.message.toString())
+                }
+            })
+        }
+    }
+
+    private fun updateUI(visibility:Boolean){
+        if(visibility){
+            populateUIForecast()
+        }else{
+            this.forecastView.visibility = View.GONE
+        }
+    }
+
+    private fun populateUIForecast(){
+        this.txtMinTemp.text = "Temp Min:" + (this.forecastForDate?.get(0)?.main?.tempMin?.minus(KELVIN)).toString() + " ºC"
+        this.txtMaxTemp.text = "Temp Max:" + (this.forecastForDate?.get(0)?.main?.tempMax?.minus(KELVIN)).toString() + " ºC"
+        this.txtHumidade.text = "Humidade:" + this.forecastForDate?.get(0)?.main?.humidity.toString()
+        val resourceID:Int = when(this.forecastForDate?.get(0)?.weather?.get(0)?.main){
+            "Clouds" -> {
+                R.drawable.ic_clouds
+            }
+            "Clear" -> {
+                R.drawable.ic_sun
+            }
+            "Rain" -> {
+                R.drawable.ic_rains
+            }
+            "Snow" -> {
+                R.drawable.ic_snow
+            }
+            else -> {
+                R.drawable.ic_clouds
+            }
+        }
+        this.imgWeather.setImageResource(resourceID)
+        this.forecastView.visibility = View.VISIBLE
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

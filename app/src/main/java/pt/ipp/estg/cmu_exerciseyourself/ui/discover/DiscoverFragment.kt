@@ -119,6 +119,7 @@ class DiscoverFragment : Fragment() {
                 filter += radius
                 val responseCallback = retrofitClient.findPlaces(filter, bias)
                 responseCallback.enqueue(object: retrofit2.Callback<GeopifyResponseObject> {
+
                     override fun onResponse(call: Call<GeopifyResponseObject>, geopifyResponse: Response<GeopifyResponseObject>) {
                         if(geopifyResponse.code() === 200){
                             Log.d("asd", geopifyResponse.body().toString())
@@ -136,7 +137,6 @@ class DiscoverFragment : Fragment() {
             } else {
                 Toast.makeText(myContext,"O raio não pode ser 0 nem ultrapassar 20km!", Toast.LENGTH_LONG).show()
             }
-
         }
         return view
     }
@@ -168,6 +168,7 @@ class DiscoverFragment : Fragment() {
                     .position(position)
                     .title("Ponto de Desporto")
                     .snippet(info)
+
             )
         }
     }
