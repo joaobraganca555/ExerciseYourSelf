@@ -128,7 +128,7 @@ class HomeFragment : Fragment(),SensorEventListener {
         binding.circularProgressBarCal.apply {
             setProgressWithAnimation(currentSteps.toFloat()*0.04f)
         }
-        binding.txtLabelCal.text = (currentSteps.toFloat()*0.04f).toString()
+        binding.txtLabelCal.text = (currentSteps.toFloat()*0.04f).toInt().toString()
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
