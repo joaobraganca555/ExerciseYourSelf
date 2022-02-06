@@ -129,6 +129,10 @@ class HealthFragment : Fragment(),SensorEventListener {
         circularProgressBar.apply {
             setProgressWithAnimation(currentSteps.toFloat())
         }
+
+        binding.circularProgressBarCal.apply {
+            setProgressWithAnimation(currentSteps.toFloat()*0.04f)
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
