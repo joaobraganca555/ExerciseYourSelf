@@ -7,7 +7,7 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/navigation_settings"
-        android:title="Definições"
+        android:title="Meu Perfil"
         app:showAsAction="never"/>
     <item
         android:id="@+id/navigation_logout"
